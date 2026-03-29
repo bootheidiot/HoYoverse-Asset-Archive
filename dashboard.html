@@ -24,13 +24,18 @@
       --success-bg:   rgba(107,255,184,0.1);
     }
 
-    html, body {
+    html {
       min-height: 100%;
       background: var(--bg);
+      transition: background 1.2s ease;
+    }
+
+    body {
+      min-height: 100%;
+      background: transparent;
       color: var(--text);
       font-family: 'Calibri', sans-serif;
       font-weight: 400;
-      transition: background 1.2s ease;
     }
 
     /* ── NAV ── */

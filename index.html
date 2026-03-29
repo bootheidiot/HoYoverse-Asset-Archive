@@ -20,13 +20,18 @@
       --footer-bg:    rgba(15,8,30,0.9);
     }
 
-    html, body {
+    html {
       height: 100%;
       background: var(--bg);
+      transition: background 1.2s ease;
+    }
+
+    body {
+      height: 100%;
+      background: transparent;
       color: var(--text);
       font-family: 'Calibri', 'Calibri Regular', sans-serif;
       font-weight: 400;
-      transition: background 1.2s ease;
     }
 
     .hero {
