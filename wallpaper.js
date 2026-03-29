@@ -115,7 +115,8 @@ function initWallpaper() {
   video.autoplay   = true;
   video.loop       = true;
   video.playsInline = true;
-  video.crossOrigin = 'anonymous'; // attempt CORS — needed for canvas sampling
+  // NOTE: crossOrigin is intentionally NOT set — Archive.org blocks CORS requests.
+  // Videos will play fine; canvas color sampling is skipped and default theme is used.
   video.style.cssText = [
     'position: fixed',
     'top: 0',
