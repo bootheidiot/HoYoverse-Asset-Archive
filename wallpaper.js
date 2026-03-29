@@ -3,9 +3,17 @@
 // Add the filenames to the WALLPAPERS array below and the script picks one randomly each load.
 
 const WALLPAPERS = [
-  // 'wallpapers/your-video-1.mp4',
-  // 'wallpapers/your-video-2.mp4',
-  // 'wallpapers/your-video-3.mp4',
+  "https://ia600102.us.archive.org/3/items/1920x-1080-to-be-fuel-for-the-night-event-animated-wallpaper/%5BUltrawide%5D%20To%20Be%20Fuel%20for%20the%20Night%20Event%20Animated%20Wallpaper.mp4",
+  "https://ia601309.us.archive.org/10/items/1920x-1080-vivian-the-final-callback-event-animated-wallpaper/%5BUltrawide%5D%20Vivian%20The%20Final%20Callback%20Event%20Animated%20Wallpaper.mp4",
+  "https://ia601501.us.archive.org/4/items/1920x-1080-sword-seeker-chronicles-event-animated-wallpaper/%5BUltrawide%5D%20Sword%20Seeker%20Chronicles%20Event%20Animated%20Wallpaper.mp4",
+  "https://ia800102.us.archive.org/17/items/1920x-1080-special-visitor-event-animated-wallpaper/%5BUltrawide%5D%20Special%20Visitor%20Event%20Animated%20Wallpaper.mp4",
+  "https://ia801607.us.archive.org/32/items/ye-shunguang-cleaving-to-the-truth-animated-wallpaper/%5BSource%5D%20Ye%20Shunguang%20Cleaving%20to%20the%20Truth%20Gacha%20Popup%20Animated%20Wallpaper.mp4",
+  "https://ia601506.us.archive.org/13/items/spooky-tale-1-midnight-piano-mystery-yidharis-late-night-call-animated-wallpaper/Spooky%20Tale%201%20%27Midnight%20Piano%20Mystery%27%20-%20Yidhari%27s%20Late%20Night%20Call%20Animated%20Wallpaper.mp4",
+  "https://archive.org/details/1920x-1080-when-dreams-remain-unfinished-event-animated-wallpaper",
+  "https://ia800508.us.archive.org/3/items/1920x-1080-floral-voyage-into-the-unknown-tv-schedule-event-animated-wallpaper/%5BUltrawide%5D%20Floral%20Voyage%20Into%20the%20Unknown%20TV%20Schedule%20Event%20Animated%20Wallpaper.mp4",
+  "https://ia601008.us.archive.org/9/items/1920x-1080-do-not-go-gentle-into-that-good-night-event-animated-wallpaper/%5BUltrawide%5D%20Do%20Not%20Go%20Gentle%20Into%20That%20Good%20Night%20Event%20Animated%20Wallpaper.mp4",
+  "https://dn710003.ca.archive.org/0/items/the-impending-crash-of-waves-event-animated-wallpaper/%5BUltrawide%5D%20The%20Impending%20Crash%20of%20Waves%20Event%20Animated%20Wallpaper.mp4",
+  
 ];
 
 // Default accent color before video loads (Purple Amethyst)
