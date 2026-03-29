@@ -9,7 +9,7 @@ const WALLPAPERS = [
   "https://ia800102.us.archive.org/17/items/1920x-1080-special-visitor-event-animated-wallpaper/%5BUltrawide%5D%20Special%20Visitor%20Event%20Animated%20Wallpaper.mp4",
   "https://ia801607.us.archive.org/32/items/ye-shunguang-cleaving-to-the-truth-animated-wallpaper/%5BSource%5D%20Ye%20Shunguang%20Cleaving%20to%20the%20Truth%20Gacha%20Popup%20Animated%20Wallpaper.mp4",
   "https://ia601506.us.archive.org/13/items/spooky-tale-1-midnight-piano-mystery-yidharis-late-night-call-animated-wallpaper/Spooky%20Tale%201%20%27Midnight%20Piano%20Mystery%27%20-%20Yidhari%27s%20Late%20Night%20Call%20Animated%20Wallpaper.mp4",
-  "https://archive.org/details/1920x-1080-when-dreams-remain-unfinished-event-animated-wallpaper",
+  "https://ia600809.us.archive.org/13/items/1920x-1080-when-dreams-remain-unfinished-event-animated-wallpaper/%5BUltrawide%5D%20When%20Dreams%20Remain%20Unfinished%20Event%20Animated%20Wallpaper.mp4",
   "https://ia800508.us.archive.org/3/items/1920x-1080-floral-voyage-into-the-unknown-tv-schedule-event-animated-wallpaper/%5BUltrawide%5D%20Floral%20Voyage%20Into%20the%20Unknown%20TV%20Schedule%20Event%20Animated%20Wallpaper.mp4",
   "https://ia601008.us.archive.org/9/items/1920x-1080-do-not-go-gentle-into-that-good-night-event-animated-wallpaper/%5BUltrawide%5D%20Do%20Not%20Go%20Gentle%20Into%20That%20Good%20Night%20Event%20Animated%20Wallpaper.mp4",
   "https://dn710003.ca.archive.org/0/items/the-impending-crash-of-waves-event-animated-wallpaper/%5BUltrawide%5D%20The%20Impending%20Crash%20of%20Waves%20Event%20Animated%20Wallpaper.mp4",
@@ -123,6 +123,7 @@ function initWallpaper() {
 
   // Create video element
   const video = document.createElement('video');
+  video.crossOrigin = "anonymous"; // ✅ ADD THIS LINE
   video.src      = src;
   video.autoplay = true;
   video.loop     = true;
@@ -152,10 +153,12 @@ function initWallpaper() {
     pointer-events: none;
   `;
   document.body.appendChild(overlay);
-
-  video.addEventListener('canplay', () => {
+  
+   video.addEventListener('canplay', () => {
     video.style.opacity = '1';
-    video.play().catch(() => {});
+    video.play().catch(err => {
+      console.warn('Autoplay failed:', err);
+    });
   });
 
   // Sample color from video periodically and update theme
@@ -172,8 +175,11 @@ function initWallpaper() {
     colorInterval = setInterval(sample, 3000);
   });
 
-  video.addEventListener('error', () => {
-    console.warn('Wallpaper video failed to load:', src);
+    video.addEventListener('error', () => {
+      console.warn('Wallpaper video failed to load:', src);
+      video.remove(); // clean up failed video
+      initWallpaper(); // try another one
+});
   });
 }
 
