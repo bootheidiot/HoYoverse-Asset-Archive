@@ -4,62 +4,66 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Contribute — HoYoverse Asset Archive</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f5f3ef;
-      --surface: #ffffff;
-      --text: #1a1916;
-      --muted: #6b6760;
-      --accent: #2c4a6e;
-      --accent-light: #e8eef5;
-      --border: #e0ddd8;
-      --gold: #b8963e;
-      --error: #c0392b;
-      --success: #2d6a4f;
+      --bg:           #1a0f2e;
+      --surface:      rgba(255,255,255,0.07);
+      --text:         #ffffff;
+      --muted:        rgba(255,255,255,0.6);
+      --accent:       #9966CC;
+      --accent-light: #5c3d7a;
+      --border:       rgba(255,255,255,0.15);
+      --gold:         #9966CC;
+      --nav-bg:       rgba(20,10,40,0.85);
+      --footer-bg:    rgba(15,8,30,0.9);
+      --error:        #ff6b6b;
+      --success:      #6bffb8;
     }
 
     html, body {
       min-height: 100%;
       background: var(--bg);
       color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
+      font-family: 'Calibri', sans-serif;
+      font-weight: 400;
+      transition: background 1.2s ease;
     }
 
     /* ── NAV ── */
     nav {
-      background: var(--surface);
+      background: var(--nav-bg);
       border-bottom: 1px solid var(--border);
       padding: 1rem 2rem;
       display: flex;
       align-items: center;
       gap: 1rem;
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     nav a {
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-size: 0.82rem;
+      letter-spacing: 0.06em;
       color: var(--muted);
       text-decoration: none;
       display: flex;
       align-items: center;
       gap: 0.4rem;
       transition: color 0.15s;
+      font-family: 'Calibri', sans-serif;
     }
-    nav a:hover { color: var(--accent); }
-
+    nav a:hover { color: var(--text); }
     nav a svg { width: 12px; height: 12px; }
 
     .nav-title {
       margin-left: auto;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem;
-      font-weight: 400;
+      font-family: 'Calibri', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
       color: var(--text);
     }
 
@@ -69,6 +73,8 @@
       margin: 0 auto;
       padding: 4rem 2rem 6rem;
       animation: fadeUp 0.6s ease both;
+      position: relative;
+      z-index: 1;
     }
 
     @keyframes fadeUp {
@@ -76,114 +82,100 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    .page-header {
-      margin-bottom: 3rem;
-    }
+    .page-header { margin-bottom: 3rem; }
 
     .eyebrow {
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 500;
+      color: var(--accent);
+      font-weight: 600;
       margin-bottom: 0.75rem;
     }
 
     h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.6rem;
-      font-weight: 300;
+      font-family: 'Calibri', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 700;
       line-height: 1.15;
       margin-bottom: 0.75rem;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.5);
     }
 
     .page-desc {
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--muted);
       line-height: 1.7;
     }
 
-    /* ── FORM ── */
-    .form-section {
-      margin-bottom: 2.5rem;
-    }
+    /* ── FORM SECTIONS ── */
+    .form-section { margin-bottom: 2.5rem; }
 
     .section-label {
-      font-size: 0.65rem;
+      font-size: 0.68rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: var(--gold);
-      font-weight: 500;
+      color: var(--accent);
+      font-weight: 600;
       margin-bottom: 1.25rem;
       padding-bottom: 0.5rem;
       border-bottom: 1px solid var(--border);
     }
 
-    .field {
-      margin-bottom: 1.5rem;
-    }
+    .field { margin-bottom: 1.5rem; }
 
     label {
       display: block;
-      font-size: 0.8rem;
-      font-weight: 500;
+      font-size: 0.88rem;
+      font-weight: 600;
       color: var(--text);
       margin-bottom: 0.4rem;
-      letter-spacing: 0.02em;
     }
 
-    label .required {
-      color: var(--gold);
-      margin-left: 2px;
-    }
+    label .required { color: var(--accent); margin-left: 2px; }
 
     select, input[type="text"] {
       width: 100%;
       padding: 0.7rem 0.9rem;
       background: var(--surface);
       border: 1.5px solid var(--border);
-      border-radius: 3px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.875rem;
+      border-radius: 4px;
+      font-family: 'Calibri', sans-serif;
+      font-size: 0.95rem;
       color: var(--text);
       appearance: none;
       transition: border-color 0.15s;
       outline: none;
+      backdrop-filter: blur(8px);
     }
 
+    select option { background: #2a1a4a; color: #fff; }
+
     select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6760' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,255,255,0.5)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 0.9rem center;
       padding-right: 2.5rem;
     }
 
-    select:focus, input[type="text"]:focus {
-      border-color: var(--accent);
-    }
+    select:focus, input[type="text"]:focus { border-color: var(--accent); }
 
-    .field-hint {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-top: 0.35rem;
-    }
-
-    /* ── FILE DROP ZONE ── */
+    /* ── DROP ZONE ── */
     .drop-zone {
       border: 2px dashed var(--border);
-      border-radius: 4px;
+      border-radius: 6px;
       background: var(--surface);
       padding: 3rem 2rem;
       text-align: center;
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s;
       position: relative;
+      backdrop-filter: blur(8px);
     }
 
-    .drop-zone:hover,
-    .drop-zone.dragover {
+    .drop-zone:hover, .drop-zone.dragover {
       border-color: var(--accent);
-      background: var(--accent-light);
+      background: rgba(153,102,204,0.15);
     }
 
     .drop-zone input[type="file"] {
@@ -195,31 +187,12 @@
       height: 100%;
     }
 
-    .drop-icon {
-      width: 36px;
-      height: 36px;
-      margin: 0 auto 1rem;
-      color: var(--muted);
-    }
-
-    .drop-label {
-      font-size: 0.9rem;
-      color: var(--text);
-      margin-bottom: 0.3rem;
-    }
-
-    .drop-sub {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
+    .drop-icon { width: 36px; height: 36px; margin: 0 auto 1rem; color: var(--muted); }
+    .drop-label { font-size: 0.95rem; color: var(--text); margin-bottom: 0.3rem; font-weight: 600; }
+    .drop-sub { font-size: 0.8rem; color: var(--muted); }
 
     /* ── FILE LIST ── */
-    #file-list {
-      margin-top: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+    #file-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
 
     .file-item {
       display: flex;
@@ -228,35 +201,18 @@
       padding: 0.6rem 0.85rem;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 3px;
-      font-size: 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      backdrop-filter: blur(8px);
       animation: fadeUp 0.3s ease both;
     }
 
-    .file-name {
-      color: var(--text);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 70%;
-    }
-
-    .file-size {
-      color: var(--muted);
-      font-size: 0.72rem;
-      flex-shrink: 0;
-    }
-
+    .file-name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
+    .file-size { color: var(--muted); font-size: 0.78rem; flex-shrink: 0; }
     .file-remove {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--muted);
-      padding: 0 0 0 0.75rem;
-      font-size: 1rem;
-      line-height: 1;
-      transition: color 0.15s;
-      flex-shrink: 0;
+      background: none; border: none; cursor: pointer;
+      color: var(--muted); padding: 0 0 0 0.75rem;
+      font-size: 1rem; line-height: 1; transition: color 0.15s; flex-shrink: 0;
     }
     .file-remove:hover { color: var(--error); }
 
@@ -276,70 +232,74 @@
       padding: 0.9rem 2rem;
       background: var(--accent);
       color: #fff;
-      border: 1.5px solid var(--accent);
-      border-radius: 3px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 500;
-      letter-spacing: 0.05em;
+      border: 2px solid var(--accent);
+      border-radius: 4px;
+      font-family: 'Calibri', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
     .btn-submit:hover:not(:disabled) {
-      background: #1e3550;
-      border-color: #1e3550;
+      filter: brightness(1.2);
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(44,74,110,0.2);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
 
-    .btn-submit:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+    .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .submit-note {
-      font-size: 0.75rem;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+    .submit-note { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
 
-    /* ── STATUS MESSAGES ── */
+    /* ── STATUS ── */
     .status {
       margin-top: 1.5rem;
       padding: 1rem 1.2rem;
-      border-radius: 3px;
-      font-size: 0.85rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
       line-height: 1.6;
       display: none;
+      backdrop-filter: blur(8px);
     }
 
     .status.success {
-      background: #eaf4ef;
-      border: 1px solid #a8d5bb;
+      background: rgba(107,255,184,0.1);
+      border: 1px solid rgba(107,255,184,0.4);
       color: var(--success);
       display: block;
     }
 
     .status.error {
-      background: #fdf0ef;
-      border: 1px solid #e8b4b0;
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.4);
       color: var(--error);
       display: block;
     }
 
-    /* ── SPINNER ── */
     .spinner {
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(255,255,255,0.4);
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
       border-top-color: #fff;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
       display: none;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    footer {
+      background: var(--footer-bg);
+      border-top: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      font-family: 'Calibri', sans-serif;
+      color: var(--muted);
+      backdrop-filter: blur(12px);
+      position: relative;
+      z-index: 1;
+    }
+    footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -357,7 +317,7 @@
   <main>
     <div class="page-header">
       <p class="eyebrow">Open Submissions</p>
-      <h1>Contribute to<br>the Archive</h1>
+      <h1>Contribute to the Archive</h1>
       <p class="page-desc">
         Upload your files below and fill out the submission details.
         All submissions are reviewed before being added to the archive.
@@ -367,7 +327,6 @@
 
     <div id="submission-form">
 
-      <!-- FILES -->
       <div class="form-section">
         <p class="section-label">01 — Files</p>
         <div class="drop-zone" id="drop-zone">
@@ -382,7 +341,6 @@
         <div id="file-list"></div>
       </div>
 
-      <!-- DETAILS -->
       <div class="form-section">
         <p class="section-label">02 — Details</p>
 
@@ -406,7 +364,6 @@
         </div>
       </div>
 
-      <!-- SUBMIT -->
       <div class="submit-wrap">
         <button class="btn-submit" id="submit-btn" disabled onclick="submitForm()">
           <span class="spinner" id="spinner"></span>
@@ -419,15 +376,17 @@
       </div>
 
       <div class="status" id="status-msg"></div>
-
     </div>
   </main>
 
+  <footer>
+    HoYoverse Asset Archive &mdash;
+    <a href="https://archive.org/details/@bootheidiot/uploads" target="_blank">View on Internet Archive</a>
+  </footer>
+
+  <script src="wallpaper.js"></script>
   <script>
-    // ── CONFIG ──────────────────────────────────────────────────────────────────
-    // Replace this with your actual Render/Railway backend URL once deployed.
     const BACKEND_URL = 'https://hoyoverse-asset-archive-backend.onrender.com/submit';
-    // ─────────────────────────────────────────────────────────────────────────────
 
     const dropZone   = document.getElementById('drop-zone');
     const fileInput  = document.getElementById('file-input');
@@ -439,7 +398,6 @@
 
     let selectedFiles = [];
 
-    // Drag-and-drop visual
     dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
     dropZone.addEventListener('drop', e => {
@@ -454,9 +412,7 @@
 
     function addFiles(newFiles) {
       newFiles.forEach(f => {
-        if (!selectedFiles.find(x => x.name === f.name && x.size === f.size)) {
-          selectedFiles.push(f);
-        }
+        if (!selectedFiles.find(x => x.name === f.name && x.size === f.size)) selectedFiles.push(f);
       });
       renderFileList();
       validateForm();
@@ -489,8 +445,7 @@
     }
 
     function validateForm() {
-      const ready = selectedFiles.length > 0 && gameSelect.value && typeSelect.value;
-      submitBtn.disabled = !ready;
+      submitBtn.disabled = !(selectedFiles.length > 0 && gameSelect.value && typeSelect.value);
     }
 
     async function submitForm() {
@@ -524,6 +479,5 @@
       }
     }
   </script>
-
 </body>
 </html>
