@@ -14,142 +14,82 @@
       --text:         #ffffff;
       --muted:        rgba(255,255,255,0.6);
       --accent:       #9966CC;
-      --accent-light: #5c3d7a;
       --border:       rgba(255,255,255,0.15);
-      --gold:         #9966CC;
       --nav-bg:       rgba(20,10,40,0.85);
       --footer-bg:    rgba(15,8,30,0.9);
       --error:        #ff6b6b;
       --success:      #6bffb8;
-      --error-bg:     rgba(255,107,107,0.1);
-      --success-bg:   rgba(107,255,184,0.1);
-    }
-    body * {
-        text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 2px 16px rgba(0,0,0,0.5);
-      }
-    html {
-      min-height: 100%;
-      background: var(--bg);
-      transition: background 1.2s ease;
     }
 
-    body {
-      min-height: 100%;
-      background: transparent;
-      color: var(--text);
-      font-family: 'Calibri', sans-serif;
-      font-weight: 400;
-    }
+    body * { text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 2px 16px rgba(0,0,0,0.5); }
+
+    html { min-height: 100%; background: var(--bg); transition: background 1.2s ease; }
+    body { min-height: 100%; background: transparent; color: var(--text); font-family: 'Calibri', sans-serif; }
 
     /* ── NAV ── */
     nav {
-      background: var(--nav-bg);
-      border-bottom: 1px solid var(--border);
-      padding: 1rem 2rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(12px);
+      background: var(--nav-bg); border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem;
+      position: sticky; top: 0; z-index: 200; backdrop-filter: blur(12px);
     }
-
-    .nav-brand { font-family: 'Calibri', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); }
-
+    .nav-brand { font-size: 1rem; font-weight: 700; }
     .nav-badge {
-      background: var(--accent);
-      color: #fff;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 0.2rem 0.6rem;
-      border-radius: 3px;
+      background: var(--accent); color: #fff; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 3px;
     }
-
     .nav-right { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
-
     .pending-count { font-size: 0.85rem; color: var(--muted); }
     .pending-count strong { color: var(--accent); font-weight: 700; }
 
-    /* ── MAIN ── */
-    main {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 3rem 2rem 6rem;
-      position: relative;
-      z-index: 1;
+    /* ── TABS ── */
+    .tabs {
+      display: flex; gap: 0; border-bottom: 1px solid var(--border);
+      background: var(--nav-bg); backdrop-filter: blur(12px);
+      position: sticky; top: 57px; z-index: 199;
     }
+    .tab-btn {
+      padding: 0.85rem 1.75rem; background: none; border: none;
+      color: var(--muted); font-family: 'Calibri', sans-serif;
+      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      border-bottom: 2px solid transparent; transition: all 0.15s;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── MAIN ── */
+    main { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 6rem; position: relative; z-index: 1; }
 
     .page-header {
-      margin-bottom: 2.5rem;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
+      margin-bottom: 2.5rem; display: flex;
+      align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
     }
+    h1 { font-size: 2rem; font-weight: 700; }
+    h2 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.5rem; }
+    .eyebrow { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 0.4rem; }
 
-    h1 { font-family: 'Calibri', sans-serif; font-size: 2rem; font-weight: 700; text-shadow: 0 2px 16px rgba(0,0,0,0.5); }
-
-    .eyebrow {
-      font-size: 0.68rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent);
-      font-weight: 600;
-      margin-bottom: 0.4rem;
-    }
-
-    /* ── FILTERS ── */
     .filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-
     .filter-btn {
-      padding: 0.4rem 0.9rem;
-      border-radius: 3px;
-      border: 1.5px solid var(--border);
-      background: var(--surface);
-      font-family: 'Calibri', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--muted);
-      cursor: pointer;
-      transition: all 0.15s;
-      backdrop-filter: blur(8px);
+      padding: 0.4rem 0.9rem; border-radius: 3px; border: 1.5px solid var(--border);
+      background: var(--surface); font-family: 'Calibri', sans-serif;
+      font-size: 0.82rem; font-weight: 600; color: var(--muted);
+      cursor: pointer; transition: all 0.15s; backdrop-filter: blur(8px);
     }
-
     .filter-btn:hover { border-color: var(--accent); color: var(--text); }
     .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-    /* ── CONFIG BANNER ── */
-    .config-banner {
-      background: rgba(255,200,100,0.1);
-      border: 1px solid rgba(255,200,100,0.3);
-      border-radius: 4px;
-      padding: 0.85rem 1.2rem;
-      font-size: 0.82rem;
-      color: rgba(255,220,120,0.9);
-      margin-bottom: 2rem;
-      line-height: 1.6;
-      backdrop-filter: blur(8px);
-    }
-
-    /* ── EMPTY STATE ── */
-    .empty-state { text-align: center; padding: 5rem 2rem; color: var(--muted); }
-    .empty-state p { font-size: 0.9rem; margin-top: 0.5rem; }
-    .empty-icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5; }
-
-    /* ── CARD ── */
+    /* ── CARDS ── */
     .submissions { display: flex; flex-direction: column; gap: 1.5rem; }
 
+    .empty-state { text-align: center; padding: 5rem 2rem; color: var(--muted); }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5; }
+
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-      backdrop-filter: blur(12px);
-      animation: fadeUp 0.4s ease both;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; overflow: hidden;
+      backdrop-filter: blur(12px); animation: fadeUp 0.4s ease both;
     }
 
     @keyframes fadeUp {
@@ -158,173 +98,199 @@
     }
 
     .card-header {
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
+      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
     }
-
     .card-id { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
-
     .card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
-
-    .tag {
-      padding: 0.2rem 0.6rem;
-      border-radius: 3px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-    }
-
+    .tag { padding: 0.2rem 0.6rem; border-radius: 3px; font-size: 0.72rem; font-weight: 600; }
     .tag-game             { background: rgba(153,102,204,0.25); color: #cc99ff; }
     .tag-type             { background: rgba(255,255,255,0.1);  color: rgba(255,255,255,0.7); }
     .tag-status-pending   { background: rgba(255,200,80,0.15);  color: #ffd060; }
     .tag-status-approved  { background: rgba(107,255,184,0.15); color: #6bffb8; }
     .tag-status-rejected  { background: rgba(255,107,107,0.15); color: #ff6b6b; }
-
     .card-time { margin-left: auto; font-size: 0.75rem; color: var(--muted); }
 
-    /* ── FILE GRID ── */
+    /* submission metadata summary */
+    .card-meta {
+      padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; gap: 2rem; flex-wrap: wrap;
+      background: rgba(0,0,0,0.1); font-size: 0.82rem;
+    }
+    .card-meta-item { display: flex; flex-direction: column; gap: 0.1rem; }
+    .card-meta-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+    .card-meta-value { color: var(--text); font-weight: 600; }
+
     .file-grid {
       padding: 1.5rem;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;
     }
-
-    .file-card {
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      background: rgba(0,0,0,0.2);
-    }
-
-    .file-preview {
-      width: 100%;
-      aspect-ratio: 16/10;
-      background: rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-
-    .file-preview img, .file-preview video {
-      width: 100%; height: 100%; object-fit: contain;
-    }
-
+    .file-card { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; background: rgba(0,0,0,0.2); }
+    .file-preview { width: 100%; aspect-ratio: 16/10; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .file-preview img, .file-preview video { width: 100%; height: 100%; object-fit: contain; }
     .file-preview .file-icon { font-size: 2rem; opacity: 0.4; }
-
-    .file-info {
-      padding: 0.6rem 0.75rem;
-      border-top: 1px solid var(--border);
-    }
-
-    .file-fname {
-      font-size: 0.78rem;
-      color: var(--text);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 0.2rem;
-    }
-
+    .file-info { padding: 0.6rem 0.75rem; border-top: 1px solid var(--border); }
+    .file-fname { font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.2rem; }
     .file-meta { display: flex; gap: 0.75rem; font-size: 0.7rem; color: var(--muted); }
-
-    .file-download {
-      display: block;
-      margin-top: 0.5rem;
-      font-size: 0.72rem;
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
-    }
+    .file-download { display: block; margin-top: 0.5rem; font-size: 0.72rem; color: var(--accent); text-decoration: none; font-weight: 600; }
     .file-download:hover { text-decoration: underline; }
 
-    /* ── ACTIONS ── */
     .card-actions {
-      padding: 1rem 1.5rem;
-      border-top: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      background: rgba(0,0,0,0.15);
-      flex-wrap: wrap;
+      padding: 1rem 1.5rem; border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.75rem;
+      background: rgba(0,0,0,0.15); flex-wrap: wrap;
     }
 
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.55rem 1.1rem;
-      border-radius: 4px;
-      font-family: 'Calibri', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-      border: 1.5px solid transparent;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.55rem 1.1rem; border-radius: 4px;
+      font-family: 'Calibri', sans-serif; font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; transition: all 0.15s; border: 1.5px solid transparent;
     }
-
-    .btn-approve {
-      background: rgba(107,255,184,0.15);
-      color: var(--success);
-      border-color: rgba(107,255,184,0.3);
-    }
+    .btn-approve { background: rgba(107,255,184,0.15); color: var(--success); border-color: rgba(107,255,184,0.3); }
     .btn-approve:hover { background: rgba(107,255,184,0.25); }
-
-    .btn-reject {
-      background: rgba(255,107,107,0.1);
-      color: var(--error);
-      border-color: rgba(255,107,107,0.25);
-    }
-    .btn-reject:hover { background: rgba(255,107,107,0.2); }
-
-    .btn-delete {
-      background: rgba(255,150,50,0.1);
-      color: #ffaa55;
-      border-color: rgba(255,150,50,0.25);
-    }
-    .btn-delete:hover { background: rgba(255,150,50,0.2); }
+    .btn-reject  { background: rgba(255,107,107,0.1);  color: var(--error);   border-color: rgba(255,107,107,0.25); }
+    .btn-reject:hover  { background: rgba(255,107,107,0.2); }
+    .btn-delete  { background: rgba(255,150,50,0.1);   color: #ffaa55;        border-color: rgba(255,150,50,0.25); }
+    .btn-delete:hover  { background: rgba(255,150,50,0.2); }
+    .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-primary:hover { filter: brightness(1.15); }
+    .btn-secondary { background: var(--surface); color: var(--text); border-color: var(--border); backdrop-filter: blur(8px); }
+    .btn-secondary:hover { border-color: var(--accent); }
 
     .action-note { margin-left: auto; font-size: 0.75rem; color: var(--muted); }
 
+    /* ── APPROVAL PANEL (modal overlay) ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      z-index: 500; display: flex; align-items: center; justify-content: center;
+      padding: 2rem; opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: #1e1035; border: 1px solid var(--border);
+      border-radius: 8px; width: 100%; max-width: 680px;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(16px); transition: transform 0.25s ease;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    .modal-header {
+      padding: 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-header h2 { font-size: 1.2rem; font-weight: 700; margin: 0; }
+    .modal-close {
+      background: none; border: none; color: var(--muted);
+      font-size: 1.4rem; cursor: pointer; line-height: 1; transition: color 0.15s;
+    }
+    .modal-close:hover { color: var(--text); }
+
+    .modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .modal-field { display: flex; flex-direction: column; gap: 0.4rem; }
+    .modal-label { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+
+    .modal-input, .modal-textarea {
+      width: 100%; padding: 0.65rem 0.85rem;
+      background: rgba(255,255,255,0.06); border: 1.5px solid var(--border);
+      border-radius: 4px; font-family: 'Calibri', sans-serif;
+      font-size: 0.92rem; color: var(--text); outline: none;
+      transition: border-color 0.15s;
+    }
+    .modal-input:focus, .modal-textarea:focus { border-color: var(--accent); }
+    .modal-textarea { resize: vertical; min-height: 80px; }
+
+    .modal-section-title {
+      font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    }
+
+    /* file rename rows inside modal */
+    .rename-row {
+      display: grid; grid-template-columns: auto 1fr;
+      gap: 0.75rem; align-items: center;
+      padding: 0.6rem 0.75rem; background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border); border-radius: 4px;
+    }
+    .rename-thumb {
+      width: 60px; height: 40px; object-fit: cover;
+      border-radius: 3px; background: rgba(0,0,0,0.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0; overflow: hidden;
+    }
+    .rename-thumb img, .rename-thumb video { width: 100%; height: 100%; object-fit: cover; }
+    .rename-info { display: flex; flex-direction: column; gap: 0.35rem; }
+    .rename-orig { font-size: 0.72rem; color: var(--muted); }
+    .rename-res  { font-size: 0.68rem; color: var(--accent); }
+
+    .modal-footer {
+      padding: 1.25rem 1.5rem; border-top: 1px solid var(--border);
+      display: flex; gap: 0.75rem; justify-content: flex-end;
+    }
+
+    /* ── ADD TO EXISTING POST ── */
+    .ia-search-bar {
+      display: flex; gap: 0.75rem; margin-bottom: 1.5rem;
+    }
+    .ia-search-bar input {
+      flex: 1; padding: 0.7rem 0.9rem;
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 4px; font-family: 'Calibri', sans-serif;
+      font-size: 0.92rem; color: var(--text); outline: none;
+      backdrop-filter: blur(8px); transition: border-color 0.15s;
+    }
+    .ia-search-bar input:focus { border-color: var(--accent); }
+
+    .ia-items { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .ia-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.85rem 1rem; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 6px;
+      backdrop-filter: blur(8px); cursor: pointer; transition: border-color 0.15s;
+    }
+    .ia-item:hover { border-color: var(--accent); }
+    .ia-item-thumb {
+      width: 64px; height: 40px; border-radius: 3px;
+      background: rgba(0,0,0,0.3); overflow: hidden; flex-shrink: 0;
+    }
+    .ia-item-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .ia-item-info { flex: 1; min-width: 0; }
+    .ia-item-title { font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ia-item-id { font-size: 0.72rem; color: var(--muted); }
+
+    /* Upload-to-existing modal reuses .modal styles */
+    .add-file-drop {
+      border: 2px dashed var(--border); border-radius: 6px;
+      padding: 2rem; text-align: center; cursor: pointer;
+      transition: all 0.2s; position: relative; background: rgba(0,0,0,0.1);
+    }
+    .add-file-drop:hover { border-color: var(--accent); background: rgba(153,102,204,0.1); }
+    .add-file-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
     /* ── TOAST ── */
     #toast {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: rgba(30,15,50,0.95);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.75rem 1.25rem;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      opacity: 0;
-      transform: translateY(8px);
-      transition: all 0.25s ease;
-      pointer-events: none;
-      z-index: 999;
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: rgba(30,15,50,0.95); border: 1px solid var(--border);
+      color: var(--text); padding: 0.75rem 1.25rem; border-radius: 4px;
+      font-size: 0.85rem; opacity: 0; transform: translateY(8px);
+      transition: all 0.25s ease; pointer-events: none; z-index: 999;
       backdrop-filter: blur(12px);
     }
     #toast.show { opacity: 1; transform: translateY(0); }
 
     footer {
-      background: var(--footer-bg);
-      border-top: 1px solid var(--border);
-      padding: 1.25rem 2rem;
-      text-align: center;
-      font-size: 0.85rem;
-      font-family: 'Calibri', sans-serif;
-      color: var(--muted);
-      backdrop-filter: blur(12px);
-      position: relative;
-      z-index: 1;
+      background: var(--footer-bg); border-top: 1px solid var(--border);
+      padding: 1.25rem 2rem; text-align: center; font-size: 0.85rem;
+      color: var(--muted); backdrop-filter: blur(12px); position: relative; z-index: 1;
     }
     footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
     footer a:hover { text-decoration: underline; }
+
+    input[type="text"], textarea, select { color-scheme: dark; }
   </style>
 </head>
 <body>
@@ -337,30 +303,97 @@
     </div>
   </nav>
 
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('submissions', this)">Submissions</button>
+    <button class="tab-btn" onclick="switchTab('existing', this)">Add to Existing Post</button>
+  </div>
+
   <main>
-    <div class="page-header">
-      <div>
-        <p class="eyebrow">Review Queue</p>
-        <h1>Submissions</h1>
+
+    <!-- ── TAB 1: SUBMISSIONS ── -->
+    <div class="tab-panel active" id="tab-submissions">
+      <div class="page-header">
+        <div>
+          <p class="eyebrow">Review Queue</p>
+          <h1>Submissions</h1>
+        </div>
+        <div class="filters">
+          <button class="filter-btn active" onclick="setFilter('pending', this)">Pending</button>
+          <button class="filter-btn" onclick="setFilter('approved', this)">Approved</button>
+          <button class="filter-btn" onclick="setFilter('rejected', this)">Rejected</button>
+          <button class="filter-btn" onclick="setFilter('all', this)">All</button>
+        </div>
       </div>
-      <div class="filters">
-        <button class="filter-btn active" onclick="setFilter('pending', this)">Pending</button>
-        <button class="filter-btn" onclick="setFilter('approved', this)">Approved</button>
-        <button class="filter-btn" onclick="setFilter('rejected', this)">Rejected</button>
-        <button class="filter-btn" onclick="setFilter('all', this)">All</button>
+      <div class="submissions" id="submissions-container">
+        <div class="empty-state">
+          <div class="empty-icon">📂</div>
+          <strong>Loading submissions…</strong>
+        </div>
       </div>
     </div>
 
-    <div class="submissions" id="submissions-container">
-      <div class="empty-state">
-        <div class="empty-icon">📂</div>
-        <strong>Loading submissions…</strong>
-        <p>Connecting to backend.</p>
+    <!-- ── TAB 2: ADD TO EXISTING ── -->
+    <div class="tab-panel" id="tab-existing">
+      <div class="page-header">
+        <div>
+          <p class="eyebrow">Internet Archive</p>
+          <h1>Add to Existing Post</h1>
+        </div>
+      </div>
+      <div class="ia-search-bar">
+        <input type="text" id="ia-search" placeholder="Search your Archive.org items…" oninput="searchIAItems()">
+        <button class="btn btn-primary" onclick="searchIAItems()">Search</button>
+      </div>
+      <div class="ia-items" id="ia-items-list">
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <strong>Search for an item above</strong>
+          <p>Your Archive.org uploads will appear here.</p>
+        </div>
       </div>
     </div>
+
   </main>
 
+  <footer>
+    HoYoverse Asset Archive &mdash;
+    <a href="https://archive.org/details/@bootheidiot/uploads" target="_blank">View on Internet Archive</a>
+  </footer>
 
+  <!-- ── APPROVAL MODAL ── -->
+  <div class="modal-overlay" id="approval-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>📤 Post to Archive.org</h2>
+        <button class="modal-close" onclick="closeModal('approval-modal')">✕</button>
+      </div>
+      <div class="modal-body" id="approval-modal-body">
+        <!-- populated by JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('approval-modal')">Cancel</button>
+        <button class="btn btn-primary" id="modal-post-btn" onclick="postToArchive()">
+          <span id="modal-spinner" style="display:none;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;"></span>
+          Post to Archive.org
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADD-TO-EXISTING MODAL ── -->
+  <div class="modal-overlay" id="add-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="add-modal-title">Add Files to Post</h2>
+        <button class="modal-close" onclick="closeModal('add-modal')">✕</button>
+      </div>
+      <div class="modal-body" id="add-modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('add-modal')">Cancel</button>
+        <button class="btn btn-primary" id="add-post-btn" onclick="uploadToExisting()">Upload Files</button>
+      </div>
+    </div>
+  </div>
 
   <div id="toast"></div>
 
@@ -368,161 +401,202 @@
   <script>
     const BACKEND_URL = 'https://hoyoverse-asset-archive-backend.onrender.com';
 
-    let currentFilter = 'pending';
-    let allSubmissions = [];
+    let currentFilter    = 'pending';
+    let allSubmissions   = [];
+    let pendingApproval  = null; // submission being reviewed in modal
+    let pendingIAItem    = null; // IA item selected for add-to-existing
+    let addFiles         = [];   // files staged for add-to-existing
 
     const GAME_LABELS = {
       'zzz': 'Zenless Zone Zero',
     };
 
-    const TYPE_LABELS = {
-      'limited-time-events': 'Limited Time Events',
-      'misc-marketing-material': 'Misc Marketing Material',
-    };
+    // ── UTILITIES ──────────────────────────────────────────────────────────────
 
     function humanTime(iso) {
-      const d = new Date(iso);
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      return new Date(iso).toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      });
     }
 
-    function formatSize(bytes) {
-      if (!bytes) return '—';
-      if (bytes < 1024) return bytes + ' B';
-      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    function formatSize(b) {
+      if (!b) return '—';
+      if (b < 1024) return b + ' B';
+      if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+      return (b/1048576).toFixed(1) + ' MB';
     }
 
-    function isImage(name) { return /\.(png|jpe?g|gif|webp|svg|avif)$/i.test(name); }
-    function isVideo(name) { return /\.(mp4|webm|mov|avi|mkv)$/i.test(name); }
-
-    function renderPreview(file) {
-      if (isImage(file.name) && file.url) return `<img src="${file.url}" alt="${file.name}" loading="lazy">`;
-      if (isVideo(file.name) && file.url) return `<video src="${file.url}" controls preload="metadata"></video>`;
-      const ext = file.name.split('.').pop().toUpperCase();
-      return `<span class="file-icon">📄 ${ext}</span>`;
+    function slugify(str) {
+      return str.toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .slice(0, 80);
     }
 
-    function renderCard(sub) {
-      const gameLabel = GAME_LABELS[sub.game] || sub.game;
-      const typeLabel = TYPE_LABELS[sub.contentType] || sub.contentType;
+    function isImage(n) { return /\.(png|jpe?g|gif|webp|svg|avif)$/i.test(n); }
+    function isVideo(n) { return /\.(mp4|webm|mov|avi|mkv)$/i.test(n); }
 
-      const filesHtml = (sub.files || []).map(f => `
-        <div class="file-card">
-          <div class="file-preview">${renderPreview(f)}</div>
-          <div class="file-info">
-            <div class="file-fname" title="${f.name}">${f.name}</div>
-            <div class="file-meta">
-              <span>${formatSize(f.size)}</span>
-              ${f.resolution ? `<span>${f.resolution}</span>` : ''}
-            </div>
-            ${f.url ? `<a class="file-download" href="${f.url}" download="${f.name}">⬇ Download</a>` : ''}
-          </div>
-        </div>
-      `).join('');
-
-      // Actions depending on status
-      let actionsHtml = '';
-      if (sub.status === 'pending') {
-        actionsHtml = `
-          <button class="btn btn-approve" onclick="review('${sub.id}', 'approved')">✓ Approve</button>
-          <button class="btn btn-reject"  onclick="review('${sub.id}', 'rejected')">✕ Reject</button>
-          <span class="action-note">${(sub.files || []).length} file(s)</span>
-        `;
-      } else if (sub.status === 'approved') {
-        const r2Deleted = sub.r2Deleted;
-        actionsHtml = `
-          <span style="color: var(--success); font-size:0.82rem;">✓ Approved — ${humanTime(sub.reviewedAt)}</span>
-          ${!r2Deleted
-            ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
-            : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`
-          }
-          <span class="action-note">${(sub.files || []).length} file(s)</span>
-        `;
-      } else {
-        actionsHtml = `
-          <span style="color: var(--error); font-size:0.82rem;">✕ Rejected — ${humanTime(sub.reviewedAt)}</span>
-          ${!sub.r2Deleted
-            ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
-            : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`
-          }
-          <span class="action-note">${(sub.files || []).length} file(s)</span>
-        `;
-      }
-
-      return `
-        <div class="card" id="card-${sub.id}">
-          <div class="card-header">
-            <span class="card-id">#${sub.id}</span>
-            <div class="card-tags">
-              <span class="tag tag-game">${gameLabel}</span>
-              <span class="tag tag-type">${typeLabel}</span>
-              <span class="tag tag-status-${sub.status}">${sub.status}</span>
-            </div>
-            <span class="card-time">${humanTime(sub.submittedAt)}</span>
-          </div>
-          <div class="file-grid">${filesHtml || '<p style="padding:1rem;color:var(--muted);font-size:0.85rem;">No files attached.</p>'}</div>
-          <div class="card-actions">${actionsHtml}</div>
-        </div>
-      `;
+    function renderThumb(f) {
+      if (isImage(f.name) && f.url) return `<img src="${f.url}" loading="lazy">`;
+      if (isVideo(f.name) && f.url) return `<video src="${f.url}" preload="metadata"></video>`;
+      return f.name.split('.').pop().toUpperCase();
     }
 
-    function render() {
-      const filtered = currentFilter === 'all'
-        ? allSubmissions
-        : allSubmissions.filter(s => s.status === currentFilter);
-
-      document.getElementById('pending-num').textContent = allSubmissions.filter(s => s.status === 'pending').length;
-
-      const container = document.getElementById('submissions-container');
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">📭</div>
-            <strong>No ${currentFilter === 'all' ? '' : currentFilter + ' '}submissions</strong>
-            <p>${currentFilter === 'pending' ? 'All caught up!' : 'Nothing here yet.'}</p>
-          </div>`;
-        return;
-      }
-      container.innerHTML = filtered.map(renderCard).join('');
+    function renderPreview(f) {
+      if (isImage(f.name) && f.url) return `<img src="${f.url}" alt="${f.name}" loading="lazy">`;
+      if (isVideo(f.name) && f.url) return `<video src="${f.url}" controls preload="metadata"></video>`;
+      return `<span class="file-icon">📄 ${f.name.split('.').pop().toUpperCase()}</span>`;
     }
 
-    function setFilter(f, btn) {
-      currentFilter = f;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    function switchTab(name, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
       btn.classList.add('active');
-      render();
     }
 
-    async function review(id, action) {
-      const btnClass = action === 'approved' ? 'btn-approve' : 'btn-reject';
-      const btn = document.querySelector(`#card-${id} .${btnClass}`);
-      if (btn) { btn.disabled = true; btn.textContent = '…'; }
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
+    // ── SUBMISSIONS ────────────────────────────────────────────────────────────
+
+    function buildAutoFields(sub) {
+      const game       = GAME_LABELS[sub.game] || sub.game;
+      const eventTitle = sub.eventTitle || '';
+      const eventType  = sub.eventType  || '';
+      const contentType= sub.contentType|| '';
+
+      const title      = `${eventTitle} ${eventType} ${contentType}`.trim();
+      const identifier = slugify(title);
+      const description= `Taken from the ${game} ${eventType} "${eventTitle}".`;
+
+      // Build tags based on game
+      let tags = 'HoYoverse';
+      if (sub.game === 'zzz') tags = 'ZZZ, HoYoverse, Zenless Zero Zero, Wallpaper, Animated';
+
+      return { title, identifier, description, tags, creator: 'HoYoverse' };
+    }
+
+    function openApprovalModal(sub) {
+      pendingApproval = sub;
+      const auto = buildAutoFields(sub);
+      const body = document.getElementById('approval-modal-body');
+
+      body.innerHTML = `
+        <div class="modal-field">
+          <label class="modal-label">Title</label>
+          <input class="modal-input" id="m-title" value="${auto.title}">
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Archive.org Identifier <span style="color:var(--muted);font-weight:400;font-size:0.7rem;">(unique slug, no spaces)</span></label>
+          <input class="modal-input" id="m-identifier" value="${auto.identifier}">
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Description</label>
+          <textarea class="modal-textarea" id="m-description">${auto.description}</textarea>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Topics / Tags <span style="color:var(--muted);font-weight:400;font-size:0.7rem;">(comma separated)</span></label>
+          <input class="modal-input" id="m-tags" value="${auto.tags}">
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Creator</label>
+          <input class="modal-input" id="m-creator" value="${auto.creator}">
+        </div>
+
+        <p class="modal-section-title">File Names — edit before uploading</p>
+
+        ${(sub.files || []).map((f, i) => `
+          <div class="rename-row">
+            <div class="rename-thumb">${renderThumb(f)}</div>
+            <div class="rename-info">
+              <span class="rename-orig">Original: ${f.name}</span>
+              ${f.resolution ? `<span class="rename-res">📐 ${f.resolution}</span>` : ''}
+              <input class="modal-input" id="m-fname-${i}" value="${f.name}" style="margin-top:0.35rem;">
+            </div>
+          </div>
+        `).join('')}
+      `;
+
+      openModal('approval-modal');
+    }
+
+    async function postToArchive() {
+      const sub = pendingApproval;
+      if (!sub) return;
+
+      const btn = document.getElementById('modal-post-btn');
+      btn.disabled = true;
+      document.getElementById('modal-spinner').style.display = 'inline-block';
+
+      const fileNames = (sub.files || []).map((_, i) =>
+        document.getElementById(`m-fname-${i}`)?.value || sub.files[i].name
+      );
+
+      const payload = {
+        action:      'approved',
+        title:       document.getElementById('m-title').value,
+        identifier:  document.getElementById('m-identifier').value,
+        description: document.getElementById('m-description').value,
+        tags:        document.getElementById('m-tags').value,
+        creator:     document.getElementById('m-creator').value,
+        fileNames,
+      };
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/review/${sub.id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error();
+        const found = allSubmissions.find(s => s.id === sub.id);
+        if (found) found.status = 'approved';
+        closeModal('approval-modal');
+        render();
+        showToast('✓ Approved — uploading to Archive.org…');
+      } catch {
+        showToast('Something went wrong. Please try again.');
+      } finally {
+        btn.disabled = false;
+        document.getElementById('modal-spinner').style.display = 'none';
+      }
+    }
+
+    async function reject(id) {
+      const btn = document.querySelector(`#card-${id} .btn-reject`);
+      if (btn) { btn.disabled = true; btn.textContent = '…'; }
       try {
         const res = await fetch(`${BACKEND_URL}/review/${id}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action })
+          body: JSON.stringify({ action: 'rejected' }),
         });
         if (!res.ok) throw new Error();
         const sub = allSubmissions.find(s => s.id === id);
-        if (sub) sub.status = action;
+        if (sub) sub.status = 'rejected';
         render();
-        showToast(action === 'approved' ? '✓ Approved and uploading to Archive.org…' : '✕ Submission rejected.');
+        showToast('✕ Submission rejected.');
       } catch {
-        showToast('Something went wrong. Please try again.');
-        if (btn) { btn.disabled = false; btn.textContent = action === 'approved' ? '✓ Approve' : '✕ Reject'; }
+        showToast('Something went wrong.');
+        if (btn) { btn.disabled = false; btn.textContent = '✕ Reject'; }
       }
     }
 
     async function deleteFromR2(id) {
       const btn = document.querySelector(`#card-${id} .btn-delete`);
       if (btn) { btn.disabled = true; btn.textContent = 'Deleting…'; }
-
       try {
         const res = await fetch(`${BACKEND_URL}/delete-r2/${id}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' }
+          method: 'POST', headers: { 'Content-Type': 'application/json' }
         });
         if (!res.ok) throw new Error();
         const sub = allSubmissions.find(s => s.id === id);
@@ -535,11 +609,88 @@
       }
     }
 
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3500);
+    function renderCard(sub) {
+      const gameLabel = GAME_LABELS[sub.game] || sub.game;
+
+      const filesHtml = (sub.files || []).map(f => `
+        <div class="file-card">
+          <div class="file-preview">${renderPreview(f)}</div>
+          <div class="file-info">
+            <div class="file-fname" title="${f.name}">${f.name}</div>
+            <div class="file-meta">
+              <span>${formatSize(f.size)}</span>
+              ${f.resolution ? `<span>📐 ${f.resolution}</span>` : ''}
+            </div>
+            ${f.url ? `<a class="file-download" href="${f.url}" download="${f.name}">⬇ Download</a>` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      let actionsHtml = '';
+      if (sub.status === 'pending') {
+        actionsHtml = `
+          <button class="btn btn-approve" onclick="openApprovalModal(${JSON.stringify(sub).replace(/"/g,'&quot;')})">✓ Approve &amp; Post</button>
+          <button class="btn btn-reject"  onclick="reject('${sub.id}')">✕ Reject</button>
+          <span class="action-note">${(sub.files||[]).length} file(s)</span>
+        `;
+      } else if (sub.status === 'approved') {
+        actionsHtml = `
+          <span style="color:var(--success);font-size:0.82rem;">✓ Approved — ${humanTime(sub.reviewedAt)}</span>
+          ${!sub.r2Deleted
+            ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
+            : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`}
+          <span class="action-note">${(sub.files||[]).length} file(s)</span>
+        `;
+      } else {
+        actionsHtml = `
+          <span style="color:var(--error);font-size:0.82rem;">✕ Rejected — ${humanTime(sub.reviewedAt)}</span>
+          ${!sub.r2Deleted
+            ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
+            : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`}
+          <span class="action-note">${(sub.files||[]).length} file(s)</span>
+        `;
+      }
+
+      return `
+        <div class="card" id="card-${sub.id}">
+          <div class="card-header">
+            <span class="card-id">#${sub.id}</span>
+            <div class="card-tags">
+              <span class="tag tag-game">${gameLabel}</span>
+              <span class="tag tag-type">${sub.eventType || sub.contentType || ''}</span>
+              <span class="tag tag-status-${sub.status}">${sub.status}</span>
+            </div>
+            <span class="card-time">${humanTime(sub.submittedAt)}</span>
+          </div>
+          <div class="card-meta">
+            ${sub.eventTitle ? `<div class="card-meta-item"><span class="card-meta-label">Event</span><span class="card-meta-value">${sub.eventTitle}</span></div>` : ''}
+            ${sub.eventType  ? `<div class="card-meta-item"><span class="card-meta-label">Type</span><span class="card-meta-value">${sub.eventType}</span></div>` : ''}
+            ${sub.contentType? `<div class="card-meta-item"><span class="card-meta-label">Content</span><span class="card-meta-value">${sub.contentType}</span></div>` : ''}
+          </div>
+          <div class="file-grid">${filesHtml || '<p style="padding:1rem;color:var(--muted);">No files.</p>'}</div>
+          <div class="card-actions">${actionsHtml}</div>
+        </div>
+      `;
+    }
+
+    function render() {
+      const filtered = currentFilter === 'all'
+        ? allSubmissions
+        : allSubmissions.filter(s => s.status === currentFilter);
+      document.getElementById('pending-num').textContent = allSubmissions.filter(s => s.status === 'pending').length;
+      const c = document.getElementById('submissions-container');
+      if (!filtered.length) {
+        c.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><strong>No ${currentFilter === 'all' ? '' : currentFilter + ' '}submissions</strong><p>${currentFilter === 'pending' ? 'All caught up!' : 'Nothing here yet.'}</p></div>`;
+        return;
+      }
+      c.innerHTML = filtered.map(renderCard).join('');
+    }
+
+    function setFilter(f, btn) {
+      currentFilter = f;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
     }
 
     async function loadSubmissions() {
@@ -549,15 +700,102 @@
         allSubmissions = await res.json();
         render();
       } catch {
-        document.getElementById('submissions-container').innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">⚠️</div>
-            <strong>Could not connect to backend</strong>
-            <p>Make sure your backend is running and BACKEND_URL is correct.</p>
-          </div>`;
+        document.getElementById('submissions-container').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><strong>Could not connect to backend</strong><p>Check that your backend is running.</p></div>`;
       }
     }
 
+    // ── ADD TO EXISTING POST ───────────────────────────────────────────────────
+
+    async function searchIAItems() {
+      const query = document.getElementById('ia-search').value.trim();
+      const list  = document.getElementById('ia-items-list');
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">⏳</div><strong>Searching…</strong></div>`;
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/ia-search?q=${encodeURIComponent(query)}`);
+        if (!res.ok) throw new Error();
+        const items = await res.json();
+
+        if (!items.length) {
+          list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><strong>No results found</strong></div>`;
+          return;
+        }
+
+        list.innerHTML = items.map(item => `
+          <div class="ia-item" onclick="openAddModal(${JSON.stringify(item).replace(/"/g,'&quot;')})">
+            <div class="ia-item-thumb">
+              ${item.thumb ? `<img src="${item.thumb}" loading="lazy">` : ''}
+            </div>
+            <div class="ia-item-info">
+              <div class="ia-item-title">${item.title}</div>
+              <div class="ia-item-id">${item.identifier}</div>
+            </div>
+            <button class="btn btn-secondary" style="flex-shrink:0;">Add Files →</button>
+          </div>
+        `).join('');
+      } catch {
+        list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><strong>Search failed</strong><p>Check backend connection.</p></div>`;
+      }
+    }
+
+    function openAddModal(item) {
+      pendingIAItem = item;
+      addFiles = [];
+      document.getElementById('add-modal-title').textContent = `Add to: ${item.title}`;
+
+      document.getElementById('add-modal-body').innerHTML = `
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem;">Item: <strong style="color:var(--text)">${item.identifier}</strong></p>
+        <div class="add-file-drop" id="add-drop">
+          <input type="file" multiple onchange="stageAddFiles(this.files)">
+          <p style="font-size:0.9rem;font-weight:600;">Drop files here or click to browse</p>
+          <p style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem;">Files will be renamed before uploading</p>
+        </div>
+        <div id="add-file-list" style="margin-top:1rem;display:flex;flex-direction:column;gap:0.5rem;"></div>
+      `;
+      openModal('add-modal');
+    }
+
+    function stageAddFiles(fileList) {
+      addFiles = [...fileList];
+      const container = document.getElementById('add-file-list');
+      container.innerHTML = addFiles.map((f, i) => `
+        <div class="rename-row">
+          <div class="rename-thumb" style="font-size:1rem;">${f.type.startsWith('image') ? '🖼' : f.type.startsWith('video') ? '🎬' : '📄'}</div>
+          <div class="rename-info">
+            <span class="rename-orig">Original: ${f.name}</span>
+            <input class="modal-input" id="add-fname-${i}" value="${f.name}" style="margin-top:0.35rem;" placeholder="Rename before upload…">
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function uploadToExisting() {
+      if (!pendingIAItem || !addFiles.length) return;
+      const btn = document.getElementById('add-post-btn');
+      btn.disabled = true;
+      btn.textContent = 'Uploading…';
+
+      const formData = new FormData();
+      formData.append('identifier', pendingIAItem.identifier);
+      addFiles.forEach((f, i) => {
+        const renamed = document.getElementById(`add-fname-${i}`)?.value || f.name;
+        formData.append('files', f, renamed);
+      });
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/ia-add`, { method: 'POST', body: formData });
+        if (!res.ok) throw new Error();
+        closeModal('add-modal');
+        showToast('✓ Files uploaded to existing Archive.org post!');
+      } catch {
+        showToast('Upload failed. Please try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Upload Files';
+      }
+    }
+
+    // ── INIT ──────────────────────────────────────────────────────────────────
     loadSubmissions();
     setInterval(loadSubmissions, 60000);
   </script>

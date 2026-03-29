@@ -22,9 +22,9 @@
       --error:        #ff6b6b;
       --success:      #6bffb8;
     }
-    body * {
-      text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 2px 16px rgba(0,0,0,0.5);
-    }
+
+    body * { text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 2px 16px rgba(0,0,0,0.5); }
+
     html {
       min-height: 100%;
       background: var(--bg);
@@ -39,7 +39,6 @@
       font-weight: 400;
     }
 
-    /* ── NAV ── */
     nav {
       background: var(--nav-bg);
       border-bottom: 1px solid var(--border);
@@ -62,20 +61,11 @@
       align-items: center;
       gap: 0.4rem;
       transition: color 0.15s;
-      font-family: 'Calibri', sans-serif;
     }
     nav a:hover { color: var(--text); }
     nav a svg { width: 12px; height: 12px; }
+    .nav-title { margin-left: auto; font-size: 1rem; font-weight: 700; color: var(--text); }
 
-    .nav-title {
-      margin-left: auto;
-      font-family: 'Calibri', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    /* ── LAYOUT ── */
     main {
       max-width: 680px;
       margin: 0 auto;
@@ -102,21 +92,14 @@
     }
 
     h1 {
-      font-family: 'Calibri', sans-serif;
       font-size: 2.4rem;
       font-weight: 700;
       line-height: 1.15;
       margin-bottom: 0.75rem;
-      text-shadow: 0 2px 16px rgba(0,0,0,0.5);
     }
 
-    .page-desc {
-      font-size: 0.95rem;
-      color: var(--muted);
-      line-height: 1.7;
-    }
+    .page-desc { font-size: 0.95rem; color: var(--muted); line-height: 1.7; }
 
-    /* ── FORM SECTIONS ── */
     .form-section { margin-bottom: 2.5rem; }
 
     .section-label {
@@ -130,7 +113,7 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .field { margin-bottom: 1.5rem; }
+    .field { margin-bottom: 1.4rem; }
 
     label {
       display: block;
@@ -141,6 +124,8 @@
     }
 
     label .required { color: var(--accent); margin-left: 2px; }
+
+    .field-hint { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
 
     select, input[type="text"] {
       width: 100%;
@@ -168,7 +153,13 @@
 
     select:focus, input[type="text"]:focus { border-color: var(--accent); }
 
-    /* ── DROP ZONE ── */
+    /* "Other" free-text field, hidden until "other" selected */
+    .other-input {
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .other-input.visible { display: block; }
+
     .drop-zone {
       border: 2px dashed var(--border);
       border-radius: 6px;
@@ -187,35 +178,25 @@
     }
 
     .drop-zone input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
+      position: absolute; inset: 0; opacity: 0;
+      cursor: pointer; width: 100%; height: 100%;
     }
 
     .drop-icon { width: 36px; height: 36px; margin: 0 auto 1rem; color: var(--muted); }
     .drop-label { font-size: 0.95rem; color: var(--text); margin-bottom: 0.3rem; font-weight: 600; }
     .drop-sub { font-size: 0.8rem; color: var(--muted); }
 
-    /* ── FILE LIST ── */
     #file-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
 
     .file-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 0.6rem 0.85rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      font-size: 0.85rem;
-      backdrop-filter: blur(8px);
-      animation: fadeUp 0.3s ease both;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 4px; font-size: 0.85rem;
+      backdrop-filter: blur(8px); animation: fadeUp 0.3s ease both;
     }
 
-    .file-name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%; }
+    .file-name { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60%; }
     .file-size { color: var(--muted); font-size: 0.78rem; flex-shrink: 0; }
     .file-remove {
       background: none; border: none; cursor: pointer;
@@ -224,87 +205,56 @@
     }
     .file-remove:hover { color: var(--error); }
 
-    /* ── SUBMIT ── */
     .submit-wrap {
-      margin-top: 2.5rem;
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
+      margin-top: 2.5rem; display: flex;
+      align-items: center; gap: 1.5rem; flex-wrap: wrap;
     }
 
     .btn-submit {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+      display: inline-flex; align-items: center; gap: 0.5rem;
       padding: 0.9rem 2rem;
-      background: var(--accent);
-      color: #fff;
-      border: 2px solid var(--accent);
-      border-radius: 4px;
-      font-family: 'Calibri', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      background: var(--accent); color: #fff;
+      border: 2px solid var(--accent); border-radius: 4px;
+      font-family: 'Calibri', sans-serif; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s ease;
     }
 
     .btn-submit:hover:not(:disabled) {
-      filter: brightness(1.2);
-      transform: translateY(-1px);
+      filter: brightness(1.2); transform: translateY(-1px);
       box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
 
     .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
-
     .submit-note { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
 
-    /* ── STATUS ── */
     .status {
-      margin-top: 1.5rem;
-      padding: 1rem 1.2rem;
-      border-radius: 4px;
-      font-size: 0.88rem;
-      line-height: 1.6;
-      display: none;
-      backdrop-filter: blur(8px);
+      margin-top: 1.5rem; padding: 1rem 1.2rem;
+      border-radius: 4px; font-size: 0.88rem; line-height: 1.6;
+      display: none; backdrop-filter: blur(8px);
     }
 
     .status.success {
-      background: rgba(107,255,184,0.1);
-      border: 1px solid rgba(107,255,184,0.4);
-      color: var(--success);
-      display: block;
+      background: rgba(107,255,184,0.1); border: 1px solid rgba(107,255,184,0.4);
+      color: var(--success); display: block;
     }
 
     .status.error {
-      background: rgba(255,107,107,0.1);
-      border: 1px solid rgba(255,107,107,0.4);
-      color: var(--error);
-      display: block;
+      background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.4);
+      color: var(--error); display: block;
     }
 
     .spinner {
       width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: none;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite; display: none;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     footer {
-      background: var(--footer-bg);
-      border-top: 1px solid var(--border);
-      padding: 1.25rem 2rem;
-      text-align: center;
-      font-size: 0.85rem;
-      font-family: 'Calibri', sans-serif;
-      color: var(--muted);
-      backdrop-filter: blur(12px);
-      position: relative;
-      z-index: 1;
+      background: var(--footer-bg); border-top: 1px solid var(--border);
+      padding: 1.25rem 2rem; text-align: center;
+      font-size: 0.85rem; color: var(--muted);
+      backdrop-filter: blur(12px); position: relative; z-index: 1;
     }
     footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
     footer a:hover { text-decoration: underline; }
@@ -327,7 +277,7 @@
       <p class="eyebrow">Open Submissions</p>
       <h1>Contribute to the Archive</h1>
       <p class="page-desc">
-        Upload your files below and fill out the submission details.
+        Upload your files and fill out the details below.
         All submissions are reviewed before being added to the archive.
         Thank you for helping preserve HoYoverse history.
       </p>
@@ -335,6 +285,7 @@
 
     <div id="submission-form">
 
+      <!-- 01 FILES -->
       <div class="form-section">
         <p class="section-label">01 — Files</p>
         <div class="drop-zone" id="drop-zone">
@@ -344,34 +295,70 @@
             <path d="M6 26a4 4 0 01-4-4V10a4 4 0 014-4h6l2 3h12a4 4 0 014 4v9a4 4 0 01-4 4H6z" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <p class="drop-label">Drop files here or click to browse</p>
-          <p class="drop-sub">Multiple files supported — no format or size restrictions</p>
+          <p class="drop-sub">Multiple files supported — resolutions are detected automatically</p>
         </div>
         <div id="file-list"></div>
       </div>
 
+      <!-- 02 GAME -->
       <div class="form-section">
-        <p class="section-label">02 — Details</p>
+        <p class="section-label">02 — Game</p>
 
         <div class="field">
           <label for="game">Game <span class="required">*</span></label>
-          <select id="game" required>
+          <select id="game" required onchange="validateForm()">
             <option value="" disabled selected>Select a game…</option>
-            <!-- ↓ Add or remove games here -->
+            <!-- ↓ Add games here -->
             <option value="zzz">Zenless Zone Zero (ZZZ)</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="content-type">Content Type <span class="required">*</span></label>
-          <select id="content-type" required>
-            <option value="" disabled selected>Select a content type…</option>
-            <!-- ↓ Add or remove content types here -->
-            <option value="limited-time-events">Limited Time Events</option>
-            <option value="misc-marketing-material">Misc Marketing Material</option>
           </select>
         </div>
       </div>
 
+      <!-- 03 CONTENT DETAILS -->
+      <div class="form-section">
+        <p class="section-label">03 — Content Details</p>
+
+        <div class="field">
+          <label for="event-title">Event / Content Title <span class="required">*</span></label>
+          <input type="text" id="event-title" placeholder="e.g. Angels and Delusions of Muse" oninput="validateForm()">
+          <p class="field-hint">The name of the event, story, or content this is from.</p>
+        </div>
+
+        <div class="field">
+          <label for="event-type">Event Type <span class="required">*</span></label>
+          <select id="event-type" required onchange="handleOther('event-type', 'event-type-other'); validateForm()">
+            <option value="" disabled selected>Select a type…</option>
+            <!-- ↓ Add event types here -->
+            <option value="Event">Event</option>
+            <option value="Gacha Popup">Gacha Popup</option>
+            <option value="TV Schedule">TV Schedule</option>
+            <option value="Interlude">Interlude</option>
+            <option value="Story Quest">Story Quest</option>
+            <option value="Version Update">Version Update</option>
+            <option value="other">Other (specify)…</option>
+          </select>
+          <input type="text" id="event-type-other" class="other-input" placeholder="Describe the event type…" oninput="validateForm()">
+        </div>
+
+        <div class="field">
+          <label for="content-type">What Is This? <span class="required">*</span></label>
+          <select id="content-type" required onchange="handleOther('content-type', 'content-type-other'); validateForm()">
+            <option value="" disabled selected>Select what this is…</option>
+            <!-- ↓ Add content types here -->
+            <option value="Animated Wallpaper">Animated Wallpaper</option>
+            <option value="Splash Art">Splash Art</option>
+            <option value="Loading Screen">Loading Screen</option>
+            <option value="Cutscene">Cutscene</option>
+            <option value="Trailer">Trailer</option>
+            <option value="Music">Music</option>
+            <option value="UI Asset">UI Asset</option>
+            <option value="other">Other (specify)…</option>
+          </select>
+          <input type="text" id="content-type-other" class="other-input" placeholder="Describe what this is…" oninput="validateForm()">
+        </div>
+      </div>
+
+      <!-- SUBMIT -->
       <div class="submit-wrap">
         <button class="btn-submit" id="submit-btn" disabled onclick="submitForm()">
           <span class="spinner" id="spinner"></span>
@@ -401,8 +388,6 @@
     const fileList   = document.getElementById('file-list');
     const submitBtn  = document.getElementById('submit-btn');
     const statusMsg  = document.getElementById('status-msg');
-    const gameSelect = document.getElementById('game');
-    const typeSelect = document.getElementById('content-type');
 
     let selectedFiles = [];
 
@@ -415,8 +400,6 @@
     });
 
     fileInput.addEventListener('change', () => addFiles([...fileInput.files]));
-    gameSelect.addEventListener('change', validateForm);
-    typeSelect.addEventListener('change', validateForm);
 
     function addFiles(newFiles) {
       newFiles.forEach(f => {
@@ -452,8 +435,31 @@
       return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 
+    function handleOther(selectId, inputId) {
+      const sel = document.getElementById(selectId);
+      const inp = document.getElementById(inputId);
+      if (sel.value === 'other') {
+        inp.classList.add('visible');
+        inp.focus();
+      } else {
+        inp.classList.remove('visible');
+        inp.value = '';
+      }
+    }
+
+    function getFieldValue(selectId, otherId) {
+      const sel = document.getElementById(selectId);
+      if (sel.value === 'other') return document.getElementById(otherId).value.trim();
+      return sel.value;
+    }
+
     function validateForm() {
-      submitBtn.disabled = !(selectedFiles.length > 0 && gameSelect.value && typeSelect.value);
+      const hasFiles      = selectedFiles.length > 0;
+      const hasGame       = !!document.getElementById('game').value;
+      const hasTitle      = !!document.getElementById('event-title').value.trim();
+      const hasEventType  = !!getFieldValue('event-type', 'event-type-other');
+      const hasContentType = !!getFieldValue('content-type', 'content-type-other');
+      submitBtn.disabled = !(hasFiles && hasGame && hasTitle && hasEventType && hasContentType);
     }
 
     async function submitForm() {
@@ -463,8 +469,10 @@
       statusMsg.className = 'status';
 
       const formData = new FormData();
-      formData.append('game', gameSelect.value);
-      formData.append('contentType', typeSelect.value);
+      formData.append('game',        document.getElementById('game').value);
+      formData.append('eventTitle',  document.getElementById('event-title').value.trim());
+      formData.append('eventType',   getFieldValue('event-type', 'event-type-other'));
+      formData.append('contentType', getFieldValue('content-type', 'content-type-other'));
       selectedFiles.forEach(f => formData.append('files', f));
 
       try {
@@ -474,8 +482,10 @@
         statusMsg.textContent = '✓ Submission received! Your files are now pending review. Thank you for contributing to the archive.';
         selectedFiles = [];
         fileList.innerHTML = '';
-        gameSelect.value = '';
-        typeSelect.value = '';
+        document.getElementById('game').value = '';
+        document.getElementById('event-title').value = '';
+        document.getElementById('event-type').value = '';
+        document.getElementById('content-type').value = '';
         fileInput.value = '';
       } catch (err) {
         statusMsg.className = 'status error';
