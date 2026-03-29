@@ -295,7 +295,7 @@
             <path d="M6 26a4 4 0 01-4-4V10a4 4 0 014-4h6l2 3h12a4 4 0 014 4v9a4 4 0 01-4 4H6z" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <p class="drop-label">Drop files here or click to browse</p>
-          <p class="drop-sub">Multiple files supported — resolutions are detected automatically</p>
+          <p class="drop-sub">Multiple files supported</p>
         </div>
         <div id="file-list"></div>
       </div>
@@ -310,6 +310,12 @@
             <option value="" disabled selected>Select a game…</option>
             <!-- ↓ Add games here -->
             <option value="zzz">Zenless Zone Zero (ZZZ)</option>
+            <option value="zzz">Genshin Impact</option>
+            <option value="zzz">Honkai Star Rail</option>
+            <option value="zzz">Honkai Impact 3rd</option>
+            <option value="zzz">Petit Planet</option>
+            <option value="zzz">Honkai: Nexus Anima</option>
+            <option value="zzz">Tears of Themis</option>
           </select>
         </div>
       </div>
@@ -320,7 +326,7 @@
 
         <div class="field">
           <label for="event-title">Event / Content Title <span class="required">*</span></label>
-          <input type="text" id="event-title" placeholder="e.g. Angels and Delusions of Muse" oninput="validateForm()">
+          <input type="text" id="event-title" placeholder="e.g. New: Eridan Sunset (A)" oninput="validateForm()">
           <p class="field-hint">The name of the event, story, or content this is from.</p>
         </div>
 
@@ -332,9 +338,8 @@
             <option value="Event">Event</option>
             <option value="Gacha Popup">Gacha Popup</option>
             <option value="TV Schedule">TV Schedule</option>
-            <option value="Interlude">Interlude</option>
-            <option value="Story Quest">Story Quest</option>
-            <option value="Version Update">Version Update</option>
+            <option value="TV Schedule">Web Event</option>
+            <option value="TV Schedule">Deadly Assault</option>
             <option value="other">Other (specify)…</option>
           </select>
           <input type="text" id="event-type-other" class="other-input" placeholder="Describe the event type…" oninput="validateForm()">
@@ -346,8 +351,6 @@
             <option value="" disabled selected>Select what this is…</option>
             <!-- ↓ Add content types here -->
             <option value="Animated Wallpaper">Animated Wallpaper</option>
-            <option value="Splash Art">Splash Art</option>
-            <option value="Loading Screen">Loading Screen</option>
             <option value="Cutscene">Cutscene</option>
             <option value="Trailer">Trailer</option>
             <option value="Music">Music</option>
