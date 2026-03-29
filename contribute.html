@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contribute — HoYoverse Asset Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f3ef;
+      --surface: #ffffff;
+      --text: #1a1916;
+      --muted: #6b6760;
+      --accent: #2c4a6e;
+      --accent-light: #e8eef5;
+      --border: #e0ddd8;
+      --gold: #b8963e;
+      --error: #c0392b;
+      --success: #2d6a4f;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    nav a {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.15s;
+    }
+    nav a:hover { color: var(--accent); }
+
+    nav a svg { width: 12px; height: 12px; }
+
+    .nav-title {
+      margin-left: auto;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    /* ── LAYOUT ── */
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 4rem 2rem 6rem;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .page-header {
+      margin-bottom: 3rem;
+    }
+
+    .eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.6rem;
+      font-weight: 300;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+
+    .page-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── FORM ── */
+    .form-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .field {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.02em;
+    }
+
+    label .required {
+      color: var(--gold);
+      margin-left: 2px;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      color: var(--text);
+      appearance: none;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6760' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+      padding-right: 2.5rem;
+    }
+
+    select:focus, input[type="text"]:focus {
+      border-color: var(--accent);
+    }
+
+    .field-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+    }
+
+    /* ── FILE DROP ZONE ── */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 4px;
+      background: var(--surface);
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .drop-icon {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 1rem;
+      color: var(--muted);
+    }
+
+    .drop-label {
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 0.3rem;
+    }
+
+    .drop-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ── FILE LIST ── */
+    #file-list {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0.85rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      font-size: 0.8rem;
+      animation: fadeUp 0.3s ease both;
+    }
+
+    .file-name {
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 70%;
+    }
+
+    .file-size {
+      color: var(--muted);
+      font-size: 0.72rem;
+      flex-shrink: 0;
+    }
+
+    .file-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 0 0 0 0.75rem;
+      font-size: 1rem;
+      line-height: 1;
+      transition: color 0.15s;
+      flex-shrink: 0;
+    }
+    .file-remove:hover { color: var(--error); }
+
+    /* ── SUBMIT ── */
+    .submit-wrap {
+      margin-top: 2.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.9rem 2rem;
+      background: var(--accent);
+      color: #fff;
+      border: 1.5px solid var(--accent);
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: #1e3550;
+      border-color: #1e3550;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(44,74,110,0.2);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .submit-note {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── STATUS MESSAGES ── */
+    .status {
+      margin-top: 1.5rem;
+      padding: 1rem 1.2rem;
+      border-radius: 3px;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .status.success {
+      background: #eaf4ef;
+      border: 1px solid #a8d5bb;
+      color: var(--success);
+      display: block;
+    }
+
+    .status.error {
+      background: #fdf0ef;
+      border: 1px solid #e8b4b0;
+      color: var(--error);
+      display: block;
+    }
+
+    /* ── SPINNER ── */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M13 8H3M7 4L3 8l4 4"/>
+      </svg>
+      Home
+    </a>
+    <span class="nav-title">HoYoverse Asset Archive</span>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <p class="eyebrow">Open Submissions</p>
+      <h1>Contribute to<br>the Archive</h1>
+      <p class="page-desc">
+        Upload your files below and fill out the submission details.
+        All submissions are reviewed before being added to the archive.
+        Thank you for helping preserve HoYoverse history.
+      </p>
+    </div>
+
+    <div id="submission-form">
+
+      <!-- FILES -->
+      <div class="form-section">
+        <p class="section-label">01 — Files</p>
+        <div class="drop-zone" id="drop-zone">
+          <input type="file" id="file-input" multiple accept="*/*">
+          <svg class="drop-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M18 24V12M12 18l6-6 6 6"/>
+            <path d="M6 26a4 4 0 01-4-4V10a4 4 0 014-4h6l2 3h12a4 4 0 014 4v9a4 4 0 01-4 4H6z" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p class="drop-label">Drop files here or click to browse</p>
+          <p class="drop-sub">Multiple files supported — no format or size restrictions</p>
+        </div>
+        <div id="file-list"></div>
+      </div>
+
+      <!-- DETAILS -->
+      <div class="form-section">
+        <p class="section-label">02 — Details</p>
+
+        <div class="field">
+          <label for="game">Game <span class="required">*</span></label>
+          <select id="game" required>
+            <option value="" disabled selected>Select a game…</option>
+            <!-- ↓ Add or remove games here -->
+            <option value="zzz">Zenless Zone Zero (ZZZ)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="content-type">Content Type <span class="required">*</span></label>
+          <select id="content-type" required>
+            <option value="" disabled selected>Select a content type…</option>
+            <!-- ↓ Add or remove content types here -->
+            <option value="limited-time-events">Limited Time Events</option>
+            <option value="misc-marketing-material">Misc Marketing Material</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- SUBMIT -->
+      <div class="submit-wrap">
+        <button class="btn-submit" id="submit-btn" disabled onclick="submitForm()">
+          <span class="spinner" id="spinner"></span>
+          <span id="submit-label">Submit for Review</span>
+        </button>
+        <p class="submit-note">
+          Your submission will be held for review.<br>
+          Approved files will be added to the archive.
+        </p>
+      </div>
+
+      <div class="status" id="status-msg"></div>
+
+    </div>
+  </main>
+
+  <script>
+    // ── CONFIG ──────────────────────────────────────────────────────────────────
+    // Replace this with your actual Render/Railway backend URL once deployed.
+    const BACKEND_URL = 'https://YOUR-BACKEND-URL.com/submit';
+    // ─────────────────────────────────────────────────────────────────────────────
+
+    const dropZone   = document.getElementById('drop-zone');
+    const fileInput  = document.getElementById('file-input');
+    const fileList   = document.getElementById('file-list');
+    const submitBtn  = document.getElementById('submit-btn');
+    const statusMsg  = document.getElementById('status-msg');
+    const gameSelect = document.getElementById('game');
+    const typeSelect = document.getElementById('content-type');
+
+    let selectedFiles = [];
+
+    // Drag-and-drop visual
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      addFiles([...e.dataTransfer.files]);
+    });
+
+    fileInput.addEventListener('change', () => addFiles([...fileInput.files]));
+    gameSelect.addEventListener('change', validateForm);
+    typeSelect.addEventListener('change', validateForm);
+
+    function addFiles(newFiles) {
+      newFiles.forEach(f => {
+        if (!selectedFiles.find(x => x.name === f.name && x.size === f.size)) {
+          selectedFiles.push(f);
+        }
+      });
+      renderFileList();
+      validateForm();
+    }
+
+    function removeFile(index) {
+      selectedFiles.splice(index, 1);
+      renderFileList();
+      validateForm();
+    }
+
+    function renderFileList() {
+      fileList.innerHTML = '';
+      selectedFiles.forEach((f, i) => {
+        const el = document.createElement('div');
+        el.className = 'file-item';
+        el.innerHTML = `
+          <span class="file-name">${f.name}</span>
+          <span class="file-size">${formatSize(f.size)}</span>
+          <button class="file-remove" onclick="removeFile(${i})" title="Remove">✕</button>
+        `;
+        fileList.appendChild(el);
+      });
+    }
+
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function validateForm() {
+      const ready = selectedFiles.length > 0 && gameSelect.value && typeSelect.value;
+      submitBtn.disabled = !ready;
+    }
+
+    async function submitForm() {
+      submitBtn.disabled = true;
+      document.getElementById('spinner').style.display = 'block';
+      document.getElementById('submit-label').textContent = 'Submitting…';
+      statusMsg.className = 'status';
+
+      const formData = new FormData();
+      formData.append('game', gameSelect.value);
+      formData.append('contentType', typeSelect.value);
+      selectedFiles.forEach(f => formData.append('files', f));
+
+      try {
+        const res = await fetch(BACKEND_URL, { method: 'POST', body: formData });
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        statusMsg.className = 'status success';
+        statusMsg.textContent = '✓ Submission received! Your files are now pending review. Thank you for contributing to the archive.';
+        selectedFiles = [];
+        fileList.innerHTML = '';
+        gameSelect.value = '';
+        typeSelect.value = '';
+        fileInput.value = '';
+      } catch (err) {
+        statusMsg.className = 'status error';
+        statusMsg.textContent = '✕ Something went wrong — please try again or contact the archive maintainer on Discord.';
+      } finally {
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('submit-label').textContent = 'Submit for Review';
+        validateForm();
+      }
+    }
+  </script>
+
+</body>
+</html>

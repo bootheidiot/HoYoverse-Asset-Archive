@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Review Dashboard — HoYoverse Asset Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f3ef;
+      --surface: #ffffff;
+      --text: #1a1916;
+      --muted: #6b6760;
+      --accent: #2c4a6e;
+      --accent-light: #e8eef5;
+      --border: #e0ddd8;
+      --gold: #b8963e;
+      --error: #c0392b;
+      --success: #2d6a4f;
+      --success-light: #eaf4ef;
+      --error-light: #fdf0ef;
+      --warn: #7a5c00;
+      --warn-light: #fdf8ec;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    .nav-badge {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.55rem;
+      border-radius: 2px;
+    }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .pending-count {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .pending-count strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ── MAIN ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 3rem 2rem 6rem;
+    }
+
+    .page-header {
+      margin-bottom: 2.5rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      font-weight: 300;
+    }
+
+    .eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 0.4rem;
+    }
+
+    /* ── FILTERS ── */
+    .filters {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 0.4rem 0.9rem;
+      border-radius: 2px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ── CONFIG REMINDER ── */
+    .config-banner {
+      background: var(--warn-light);
+      border: 1px solid #e8d08a;
+      border-radius: 3px;
+      padding: 0.85rem 1.2rem;
+      font-size: 0.8rem;
+      color: var(--warn);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .config-banner strong { font-weight: 500; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 5rem 2rem;
+      color: var(--muted);
+    }
+    .empty-state p { font-size: 0.9rem; margin-top: 0.5rem; }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.4; }
+
+    /* ── SUBMISSION CARD ── */
+    .submissions {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .card-id {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    .tag-game  { background: var(--accent-light); color: var(--accent); }
+    .tag-type  { background: #f0ede7; color: #5a5045; }
+    .tag-status-pending  { background: #fff8e6; color: #7a5c00; }
+    .tag-status-approved { background: var(--success-light); color: var(--success); }
+    .tag-status-rejected { background: var(--error-light); color: var(--error); }
+
+    .card-time {
+      margin-left: auto;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── FILE GRID ── */
+    .file-grid {
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .file-card {
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .file-preview {
+      width: 100%;
+      aspect-ratio: 16/10;
+      background: #e8e5e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .file-preview img,
+    .file-preview video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .file-preview .file-icon {
+      font-size: 2rem;
+      opacity: 0.35;
+    }
+
+    .file-info {
+      padding: 0.6rem 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .file-fname {
+      font-size: 0.75rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 0.2rem;
+    }
+
+    .file-meta {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .file-download {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .file-download:hover { text-decoration: underline; }
+
+    /* ── ACTIONS ── */
+    .card-actions {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: #fafaf8;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1.5px solid transparent;
+    }
+
+    .btn-approve {
+      background: var(--success);
+      color: #fff;
+      border-color: var(--success);
+    }
+    .btn-approve:hover { background: #235840; }
+
+    .btn-reject {
+      background: transparent;
+      color: var(--error);
+      border-color: #e8b4b0;
+    }
+    .btn-reject:hover { background: var(--error-light); }
+
+    .action-note {
+      margin-left: auto;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--text);
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 3px;
+      font-size: 0.82rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.25s ease;
+      pointer-events: none;
+      z-index: 999;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="nav-brand">HoYoverse Asset Archive</span>
+    <span class="nav-badge">Admin Dashboard</span>
+    <div class="nav-right">
+      <span class="pending-count">
+        <strong id="pending-num">—</strong> pending
+      </span>
+    </div>
+  </nav>
+
+  <main>
+    <div class="page-header">
+      <div>
+        <p class="eyebrow">Review Queue</p>
+        <h1>Submissions</h1>
+      </div>
+      <div class="filters">
+        <button class="filter-btn active" onclick="setFilter('pending', this)">Pending</button>
+        <button class="filter-btn" onclick="setFilter('approved', this)">Approved</button>
+        <button class="filter-btn" onclick="setFilter('rejected', this)">Rejected</button>
+        <button class="filter-btn" onclick="setFilter('all', this)">All</button>
+      </div>
+    </div>
+
+    <div class="config-banner">
+      <strong>Setup note:</strong> Replace <code>BACKEND_URL</code> in this file (and in <code>contribute.html</code>)
+      with your deployed backend URL. This dashboard fetches submissions from your backend's
+      <code>/submissions</code> endpoint and posts approvals/rejections to <code>/review/:id</code>.
+    </div>
+
+    <div class="submissions" id="submissions-container">
+      <div class="empty-state">
+        <div class="empty-icon">📂</div>
+        <strong>Loading submissions…</strong>
+        <p>Connecting to backend.</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast"></div>
+
+  <script>
+    // ── CONFIG ────────────────────────────────────────────────────────────────
+    const BACKEND_URL = 'https://YOUR-BACKEND-URL.com';
+    // ──────────────────────────────────────────────────────────────────────────
+
+    let currentFilter = 'pending';
+    let allSubmissions = [];
+
+    const GAME_LABELS = {
+      'zzz': 'Zenless Zone Zero',
+      // Add more as you expand the form
+    };
+
+    const TYPE_LABELS = {
+      'limited-time-events': 'Limited Time Events',
+      'misc-marketing-material': 'Misc Marketing Material',
+      // Add more as you expand the form
+    };
+
+    function humanTime(iso) {
+      const d = new Date(iso);
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function formatSize(bytes) {
+      if (!bytes) return '—';
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    function isImage(name) { return /\.(png|jpe?g|gif|webp|svg|avif)$/i.test(name); }
+    function isVideo(name) { return /\.(mp4|webm|mov|avi|mkv)$/i.test(name); }
+
+    function renderPreview(file) {
+      if (isImage(file.name) && file.url) {
+        return `<img src="${file.url}" alt="${file.name}" loading="lazy">`;
+      }
+      if (isVideo(file.name) && file.url) {
+        return `<video src="${file.url}" controls preload="metadata"></video>`;
+      }
+      const ext = file.name.split('.').pop().toUpperCase();
+      return `<span class="file-icon">📄 ${ext}</span>`;
+    }
+
+    function renderCard(sub) {
+      const gameLabel = GAME_LABELS[sub.game] || sub.game;
+      const typeLabel = TYPE_LABELS[sub.contentType] || sub.contentType;
+      const filesHtml = (sub.files || []).map(f => `
+        <div class="file-card">
+          <div class="file-preview">${renderPreview(f)}</div>
+          <div class="file-info">
+            <div class="file-fname" title="${f.name}">${f.name}</div>
+            <div class="file-meta">
+              <span>${formatSize(f.size)}</span>
+              ${f.resolution ? `<span>${f.resolution}</span>` : ''}
+            </div>
+            ${f.url ? `<a class="file-download" href="${f.url}" download="${f.name}">⬇ Download</a>` : ''}
+          </div>
+        </div>
+      `).join('');
+
+      const actionsHtml = sub.status === 'pending' ? `
+        <button class="btn btn-approve" onclick="review('${sub.id}', 'approved')">✓ Approve</button>
+        <button class="btn btn-reject"  onclick="review('${sub.id}', 'rejected')">✕ Reject</button>
+        <span class="action-note">${(sub.files || []).length} file(s)</span>
+      ` : `
+        <span class="action-note" style="color: var(--muted)">
+          ${sub.status === 'approved' ? '✓ Approved' : '✕ Rejected'} — ${humanTime(sub.reviewedAt || sub.submittedAt)}
+        </span>
+      `;
+
+      return `
+        <div class="card" id="card-${sub.id}">
+          <div class="card-header">
+            <span class="card-id">#${sub.id}</span>
+            <div class="card-tags">
+              <span class="tag tag-game">${gameLabel}</span>
+              <span class="tag tag-type">${typeLabel}</span>
+              <span class="tag tag-status-${sub.status}">${sub.status}</span>
+            </div>
+            <span class="card-time">${humanTime(sub.submittedAt)}</span>
+          </div>
+          <div class="file-grid">${filesHtml || '<p style="padding:1rem;color:var(--muted);font-size:0.8rem;">No files attached.</p>'}</div>
+          <div class="card-actions">${actionsHtml}</div>
+        </div>
+      `;
+    }
+
+    function render() {
+      const filtered = currentFilter === 'all'
+        ? allSubmissions
+        : allSubmissions.filter(s => s.status === currentFilter);
+
+      const pendingCount = allSubmissions.filter(s => s.status === 'pending').length;
+      document.getElementById('pending-num').textContent = pendingCount;
+
+      const container = document.getElementById('submissions-container');
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <strong>No ${currentFilter === 'all' ? '' : currentFilter + ' '}submissions</strong>
+            <p>${currentFilter === 'pending' ? 'All caught up!' : 'Nothing here yet.'}</p>
+          </div>`;
+        return;
+      }
+      container.innerHTML = filtered.map(renderCard).join('');
+    }
+
+    function setFilter(f, btn) {
+      currentFilter = f;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    }
+
+    async function review(id, action) {
+      const btn = document.querySelector(`#card-${id} .btn-${action === 'approved' ? 'approve' : 'reject'}`);
+      if (btn) { btn.disabled = true; btn.textContent = '…'; }
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/review/${id}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action })
+        });
+        if (!res.ok) throw new Error();
+        const sub = allSubmissions.find(s => s.id === id);
+        if (sub) sub.status = action;
+        render();
+        showToast(action === 'approved' ? '✓ Submission approved and uploading to Archive.org…' : '✕ Submission rejected.');
+      } catch {
+        showToast('Something went wrong. Please try again.');
+        if (btn) { btn.disabled = false; btn.textContent = action === 'approved' ? '✓ Approve' : '✕ Reject'; }
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    async function loadSubmissions() {
+      try {
+        const res = await fetch(`${BACKEND_URL}/submissions`);
+        if (!res.ok) throw new Error();
+        allSubmissions = await res.json();
+        render();
+      } catch {
+        document.getElementById('submissions-container').innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⚠️</div>
+            <strong>Could not connect to backend</strong>
+            <p>Make sure your backend is running and BACKEND_URL is set correctly.</p>
+          </div>`;
+      }
+    }
+
+    loadSubmissions();
+    // Auto-refresh every 60 seconds
+    setInterval(loadSubmissions, 60000);
+  </script>
+
+</body>
+</html>

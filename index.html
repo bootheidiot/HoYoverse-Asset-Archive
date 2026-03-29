@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HoYoverse Asset Archive</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f3ef;
+      --surface: #ffffff;
+      --text: #1a1916;
+      --muted: #6b6760;
+      --accent: #2c4a6e;
+      --accent-light: #e8eef5;
+      --border: #e0ddd8;
+      --gold: #b8963e;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      overflow: hidden;
+    }
+
+    /* Placeholder background — swap src for your own image */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(160deg, #e8eef5 0%, #f5f3ef 40%, #ede8e0 100%);
+      z-index: 0;
+    }
+
+    /* Subtle animated grid overlay */
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.45;
+      animation: gridDrift 20s linear infinite;
+    }
+
+    @keyframes gridDrift {
+      from { background-position: 0 0; }
+      to   { background-position: 48px 48px; }
+    }
+
+    /* To use your own splash image, replace .hero-bg with:
+       background-image: url('your-image.jpg');
+       background-size: cover;
+       background-position: center;
+       and add a dark overlay via ::before if needed */
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      animation: fadeUp 1s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      animation: fadeUp 1s 0.1s ease both;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 6vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 1.75rem;
+      animation: fadeUp 1s 0.2s ease both;
+    }
+
+    h1 span {
+      color: var(--accent);
+    }
+
+    .description {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      animation: fadeUp 1s 0.3s ease both;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 1s 0.4s ease both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.75rem;
+      border-radius: 3px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: 1.5px solid var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: #1e3550;
+      border-color: #1e3550;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(44,74,110,0.2);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* Arrow icon */
+    .btn svg { width: 14px; height: 14px; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.35;
+      animation: fadeUp 1s 0.6s ease both;
+    }
+
+    .divider span {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .divider-line {
+      width: 1px;
+      height: 40px;
+      background: var(--muted);
+      animation: lineGrow 1.5s 1s ease both;
+      transform-origin: top;
+    }
+
+    @keyframes lineGrow {
+      from { transform: scaleY(0); }
+      to   { transform: scaleY(1); }
+    }
+
+    /* ── INFO STRIP ── */
+    .info-strip {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 4rem 2rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .info-inner {
+      max-width: 900px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .info-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .info-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    .info-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 2rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--muted); text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="hero-bg"></div>
+
+    <div class="hero-content">
+      <p class="eyebrow">Community Preservation Project</p>
+
+      <h1>HoYoverse<br><span>Asset Archive</span></h1>
+
+      <p class="description">
+        An archive dedicated to preserving various art and assets from HoYoverse games,
+        primarily ZZZ.<br><br>
+        If you'd like to contribute to the archive, select the
+        <em>"Contribute to the Archive"</em> button below —
+        thank you for contributing to the archive 🙂
+      </p>
+
+      <div class="buttons">
+        <a href="contribute.html" class="btn btn-primary">
+          Contribute to the Archive
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
+          </svg>
+        </a>
+        <a href="https://archive.org/details/@bootheidiot/uploads" target="_blank" rel="noopener" class="btn btn-secondary">
+          Full Archive
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 8h8M8 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="divider">
+      <span>Archive</span>
+      <div class="divider-line"></div>
+    </div>
+  </section>
+
+  <section class="info-strip">
+    <div class="info-inner">
+      <div class="info-item">
+        <span class="info-label">Hosted on</span>
+        <span class="info-value">Internet Archive</span>
+        <span class="info-sub">Permanent, free preservation with full copyright protection.</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Primary Focus</span>
+        <span class="info-value">Zenless Zone Zero</span>
+        <span class="info-sub">Events, marketing materials, and miscellaneous assets.</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Contribute</span>
+        <span class="info-value">Open Submissions</span>
+        <span class="info-sub">All submissions are reviewed before being added to the archive.</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    HoYoverse Asset Archive &mdash; Community preservation project &mdash;
+    <a href="https://archive.org/details/@bootheidiot/uploads" target="_blank">View on Internet Archive</a>
+  </footer>
+
+</body>
+</html>
