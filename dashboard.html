@@ -638,13 +638,19 @@
           <span class="action-note">${(sub.files||[]).length} file(s)</span>
         `;
       } else if (sub.status === 'approved') {
+        const uploadFailed = sub.archiveUpload && sub.archiveUpload.some(r => r.error);
+        const uploadStatus = uploadFailed
+          ? `<span style="color:var(--error);font-size:0.78rem;">⚠ Upload failed</span>`
+          : `<span style="color:var(--success);font-size:0.78rem;">✓ Uploaded</span>`;
         actionsHtml = `
           <span style="color:var(--success);font-size:0.82rem;">✓ Approved — ${humanTime(sub.reviewedAt)}</span>
+          ${uploadStatus}
+          ${uploadFailed ? `<button class="btn btn-secondary" id="retry-btn-${sub.id}" onclick="retryUpload('${sub.id}')">↺ Retry Upload</button>` : ''}
+          ${downloadAllBtn}
           ${!sub.r2Deleted
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
             : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`}
-          ${downloadAllBtn}
-          <button class="btn btn-delete" style="margin-left:auto;" onclick="deleteSubmission('${sub.id}')">✕ Delete from History</button>
+          <button class="btn btn-delete" onclick="deleteSubmission('${sub.id}')">✕ Delete from History</button>
           <span class="action-note">${(sub.files||[]).length} file(s)</span>
         `;
       } else {
@@ -822,6 +828,29 @@
       } finally {
         btn.disabled = false;
         btn.textContent = 'Upload Files';
+      }
+    }
+
+    async function retryUpload(id) {
+      const btn = document.getElementById(`retry-btn-${id}`);
+      if (btn) { btn.disabled = true; btn.textContent = '↺ Retrying…'; }
+      try {
+        const res = await fetch(`${BACKEND_URL}/retry-upload/${id}`, { method: 'POST' });
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        const failed = data.results && data.results.some(r => r.error);
+        if (failed) {
+          showToast('⚠ Some files still failed — check the submission details.');
+          if (btn) { btn.disabled = false; btn.textContent = '↺ Retry Upload'; }
+        } else {
+          const sub = allSubmissions.find(s => s.id === id);
+          if (sub) sub.archiveUpload = data.results;
+          render();
+          showToast('✓ Upload succeeded!');
+        }
+      } catch {
+        showToast('Retry failed. Please try again.');
+        if (btn) { btn.disabled = false; btn.textContent = '↺ Retry Upload'; }
       }
     }
 
