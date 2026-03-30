@@ -547,18 +547,28 @@
         fileNames,
       };
 
+      const isRetry = sub.status === 'approved';
+      const endpoint = isRetry
+        ? `${BACKEND_URL}/retry-upload/${sub.id}`
+        : `${BACKEND_URL}/review/${sub.id}`;
+
       try {
-        const res = await fetch(`${BACKEND_URL}/review/${sub.id}`, {
+        const res = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
         if (!res.ok) throw new Error();
+        const data = await res.json();
         const found = allSubmissions.find(s => s.id === sub.id);
-        if (found) found.status = 'approved';
+        if (found) {
+          found.status = 'approved';
+          if (data.results) found.archiveUpload = data.results;
+        }
         closeModal('approval-modal');
+        document.getElementById('modal-post-btn').textContent = 'Post to Archive.org';
         render();
-        showToast('✓ Approved — uploading to Archive.org…');
+        showToast(isRetry ? '↺ Retry submitted — check upload status.' : '✓ Approved — uploading to Archive.org…');
       } catch {
         showToast('Something went wrong. Please try again.');
       } finally {
@@ -638,14 +648,14 @@
           <span class="action-note">${(sub.files||[]).length} file(s)</span>
         `;
       } else if (sub.status === 'approved') {
-        const uploadFailed = sub.archiveUpload && sub.archiveUpload.some(r => r.error);
+        const uploadFailed = sub.archiveUpload && sub.archiveUpload.some(r => r.error || (r.status && r.status !== 200 && r.status !== 201));
         const uploadStatus = uploadFailed
-          ? `<span style="color:var(--error);font-size:0.78rem;">⚠ Upload failed</span>`
+          ? `<span style="color:var(--error);font-size:0.78rem;">⚠ Upload failed (${sub.archiveUpload.map(r => r.status || 'err').join(', ')})</span>`
           : `<span style="color:var(--success);font-size:0.78rem;">✓ Uploaded</span>`;
         actionsHtml = `
           <span style="color:var(--success);font-size:0.82rem;">✓ Approved — ${humanTime(sub.reviewedAt)}</span>
           ${uploadStatus}
-          ${uploadFailed ? `<button class="btn btn-secondary" id="retry-btn-${sub.id}" onclick="retryUpload('${sub.id}')">↺ Retry Upload</button>` : ''}
+          <button class="btn btn-secondary" id="retry-btn-${sub.id}" onclick="openRetryModal(${JSON.stringify(sub).replace(/"/g,'&quot;')})">↺ Retry Upload</button>
           ${downloadAllBtn}
           ${!sub.r2Deleted
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
@@ -831,23 +841,85 @@
       }
     }
 
+    async function openRetryModal(sub) {
+      // Re-open the approval modal pre-filled with the saved metadata so user can confirm/edit
+      pendingApproval = sub;
+      const meta = sub.archiveMeta || {};
+      const body = document.getElementById('approval-modal-body');
+
+      // Check if identifier is already taken on Archive.org
+      let identifierWarning = '';
+      try {
+        const checkRes = await fetch(`${BACKEND_URL}/check-identifier?id=${encodeURIComponent(meta.identifier || '')}`);
+        const checkData = await checkRes.json();
+        if (checkData.taken) {
+          identifierWarning = `<div style="background:rgba(255,200,80,0.12);border:1px solid rgba(255,200,80,0.35);border-radius:4px;padding:0.75rem 1rem;font-size:0.82rem;color:#ffd060;margin-bottom:0.5rem;">
+            ⚠ The identifier <strong>${meta.identifier}</strong> already exists on Archive.org. This may cause a 403 error.
+            Consider changing the identifier below before retrying, or delete the existing item on Archive.org first.
+          </div>`;
+        } else {
+          identifierWarning = `<div style="background:rgba(107,255,184,0.08);border:1px solid rgba(107,255,184,0.25);border-radius:4px;padding:0.75rem 1rem;font-size:0.82rem;color:var(--success);margin-bottom:0.5rem;">
+            ✓ Identifier is available on Archive.org.
+          </div>`;
+        }
+      } catch {
+        identifierWarning = `<div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">Could not check identifier availability.</div>`;
+      }
+
+      const savedFileNames = sub.archiveFileNames || (sub.files || []).map(f => f.name);
+
+      body.innerHTML = `
+        ${identifierWarning}
+        <div class="modal-field">
+          <label class="modal-label">Title</label>
+          <input class="modal-input" id="m-title" value="${meta.title || ''}">
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Archive.org Identifier</label>
+          <input class="modal-input" id="m-identifier" value="${meta.identifier || ''}">
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Description</label>
+          <textarea class="modal-textarea" id="m-description">${meta.description || ''}</textarea>
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Topics / Tags</label>
+          <input class="modal-input" id="m-tags" value="${meta.tags || ''}">
+        </div>
+        <div class="modal-field">
+          <label class="modal-label">Creator</label>
+          <input class="modal-input" id="m-creator" value="${meta.creator || 'HoYoverse'}">
+        </div>
+        <p class="modal-section-title">File Names</p>
+        ${(sub.files || []).map((f, i) => `
+          <div class="rename-row">
+            <div class="rename-thumb">${renderThumb(f)}</div>
+            <div class="rename-info">
+              <span class="rename-orig">Original: ${f.name}</span>
+              ${f.resolution ? `<span class="rename-res">📐 ${f.resolution}</span>` : ''}
+              <input class="modal-input" id="m-fname-${i}" value="${savedFileNames[i] || f.name}" style="margin-top:0.35rem;">
+            </div>
+          </div>
+        `).join('')}
+      `;
+
+      document.getElementById('modal-post-btn').textContent = 'Retry Upload';
+      openModal('approval-modal');
+    }
+
     async function retryUpload(id) {
+      // Called from openRetryModal via the modal's post button (postToArchive handles it)
+      // This function kept for direct retry without modal if needed
       const btn = document.getElementById(`retry-btn-${id}`);
       if (btn) { btn.disabled = true; btn.textContent = '↺ Retrying…'; }
       try {
         const res = await fetch(`${BACKEND_URL}/retry-upload/${id}`, { method: 'POST' });
         if (!res.ok) throw new Error();
         const data = await res.json();
-        const failed = data.results && data.results.some(r => r.error);
-        if (failed) {
-          showToast('⚠ Some files still failed — check the submission details.');
-          if (btn) { btn.disabled = false; btn.textContent = '↺ Retry Upload'; }
-        } else {
-          const sub = allSubmissions.find(s => s.id === id);
-          if (sub) sub.archiveUpload = data.results;
-          render();
-          showToast('✓ Upload succeeded!');
-        }
+        const sub = allSubmissions.find(s => s.id === id);
+        if (sub) sub.archiveUpload = data.results;
+        render();
+        showToast('✓ Retry complete — check upload status.');
       } catch {
         showToast('Retry failed. Please try again.');
         if (btn) { btn.disabled = false; btn.textContent = '↺ Retry Upload'; }
