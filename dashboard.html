@@ -623,9 +623,9 @@
       `).join('');
 
       // Download all button — only show if files have URLs
-      const hasUrls = (sub.files || []).some(f => f.url);
-      const downloadAllBtn = hasUrls
-        ? `<button class="btn btn-secondary" onclick="downloadAll('${sub.id}', ${JSON.stringify(sub.files.map((f,i)=>({name:f.name,index:i}))).replace(/"/g,'&quot;')})">⬇ Download All</button>`
+      const hasFiles = (sub.files || []).length > 0;
+      const downloadAllBtn = hasFiles
+        ? `<a class="btn btn-secondary" href="${BACKEND_URL}/download-zip/${sub.id}" download>⬇ Download All as ZIP</a>`
         : '';
 
       let actionsHtml = '';
@@ -842,28 +842,7 @@
     }
 
     // ── DOWNLOAD ALL ──────────────────────────────────────────────────────────
-
-    async function downloadAll(subId, files) {
-      showToast(`⬇ Downloading ${files.length} file(s)…`);
-      for (let i = 0; i < files.length; i++) {
-        try {
-          const url = `${BACKEND_URL}/download/${subId}/${i}`;
-          const res = await fetch(url);
-          if (!res.ok) throw new Error();
-          const blob = await res.blob();
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = files[i].name;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(a.href);
-          await new Promise(r => setTimeout(r, 600));
-        } catch(e) {
-          showToast(`⚠ Could not download ${files[i].name}`);
-        }
-      }
-    }
+    // Downloads handled via /download-zip backend endpoint (see Download All as ZIP button)
 
     // ── ADD SUBMISSION FILES TO EXISTING POST ─────────────────────────────────
 
