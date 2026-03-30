@@ -655,7 +655,7 @@
         actionsHtml = `
           <span style="color:var(--success);font-size:0.82rem;">✓ Approved — ${humanTime(sub.reviewedAt)}</span>
           ${uploadStatus}
-          <button class="btn btn-secondary" id="retry-btn-${sub.id}" onclick="openRetryModal(${JSON.stringify(sub).replace(/"/g,'&quot;')})">↺ Retry Upload</button>
+          <button class="btn btn-secondary" id="retry-btn-${sub.id}" onclick="openRetryModal('${sub.id}')">↺ Retry Upload</button>
           ${downloadAllBtn}
           ${!sub.r2Deleted
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
@@ -841,8 +841,9 @@
       }
     }
 
-    async function openRetryModal(sub) {
-      // Re-open the approval modal pre-filled with the saved metadata so user can confirm/edit
+    async function openRetryModal(subId) {
+      const sub = allSubmissions.find(s => s.id === subId);
+      if (!sub) { showToast('Submission not found.'); return; }
       pendingApproval = sub;
       const meta = sub.archiveMeta || {};
       const body = document.getElementById('approval-modal-body');
