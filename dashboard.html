@@ -622,11 +622,19 @@
         </div>
       `).join('');
 
+      // Download all button — only show if files have URLs
+      const hasUrls = (sub.files || []).some(f => f.url);
+      const downloadAllBtn = hasUrls
+        ? `<button class="btn btn-secondary" onclick="downloadAll(${JSON.stringify(sub.files.filter(f=>f.url).map(f=>({url:f.url,name:f.name}))).replace(/"/g,'&quot;')})">⬇ Download All</button>`
+        : '';
+
       let actionsHtml = '';
       if (sub.status === 'pending') {
         actionsHtml = `
           <button class="btn btn-approve" onclick="openApprovalModal(${JSON.stringify(sub).replace(/"/g,'&quot;')})">✓ Approve &amp; Post</button>
           <button class="btn btn-reject"  onclick="reject('${sub.id}')">✕ Reject</button>
+          <button class="btn btn-secondary" onclick="openAddToExistingFromSub(${JSON.stringify(sub).replace(/"/g,'&quot;')})">📁 Add to Existing Post</button>
+          ${downloadAllBtn}
           <span class="action-note">${(sub.files||[]).length} file(s)</span>
         `;
       } else if (sub.status === 'approved') {
@@ -635,6 +643,7 @@
           ${!sub.r2Deleted
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
             : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`}
+          ${downloadAllBtn}
           <span class="action-note">${(sub.files||[]).length} file(s)</span>
         `;
       } else {
@@ -643,6 +652,7 @@
           ${!sub.r2Deleted
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
             : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`}
+          ${downloadAllBtn}
           <span class="action-note">${(sub.files||[]).length} file(s)</span>
         `;
       }
@@ -766,22 +776,43 @@
     }
 
     async function uploadToExisting() {
-      if (!pendingIAItem || !addFiles.length) return;
+      if (!pendingIAItem) return;
       const btn = document.getElementById('add-post-btn');
       btn.disabled = true;
       btn.textContent = 'Uploading…';
 
-      const formData = new FormData();
-      formData.append('identifier', pendingIAItem.identifier);
-      addFiles.forEach((f, i) => {
-        const renamed = document.getElementById(`add-fname-${i}`)?.value || f.name;
-        formData.append('files', f, renamed);
-      });
-
       try {
-        const res = await fetch(`${BACKEND_URL}/ia-add`, { method: 'POST', body: formData });
-        if (!res.ok) throw new Error();
+        if (pendingSubForExisting && pendingSubFiles.length > 0) {
+          // Upload from submission R2 files via backend
+          const fileNames = pendingSubFiles.map((f, i) =>
+            document.getElementById(`add-fname-${i}`)?.value || f.name
+          );
+          const res = await fetch(`${BACKEND_URL}/ia-add-from-submission`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              identifier: pendingIAItem.identifier,
+              submissionId: pendingSubForExisting.id,
+              fileNames,
+            }),
+          });
+          if (!res.ok) throw new Error();
+        } else {
+          // Upload local files
+          const formData = new FormData();
+          formData.append('identifier', pendingIAItem.identifier);
+          addFiles.forEach((f, i) => {
+            const renamed = document.getElementById(`add-fname-${i}`)?.value || f.name;
+            formData.append('files', f, renamed);
+          });
+          const res = await fetch(`${BACKEND_URL}/ia-add`, { method: 'POST', body: formData });
+          if (!res.ok) throw new Error();
+        }
+
         closeModal('add-modal');
+        pendingSubForExisting = null;
+        pendingSubFiles = [];
+        document.getElementById('ia-search').placeholder = 'Search your Archive.org items…';
         showToast('✓ Files uploaded to existing Archive.org post!');
       } catch {
         showToast('Upload failed. Please try again.');
@@ -791,7 +822,94 @@
       }
     }
 
+    // ── DOWNLOAD ALL ──────────────────────────────────────────────────────────
+
+    function downloadAll(files) {
+      // Trigger downloads sequentially with a small delay to avoid browser blocking
+      files.forEach((f, i) => {
+        setTimeout(() => {
+          const a = document.createElement('a');
+          a.href = f.url;
+          a.download = f.name;
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }, i * 600);
+      });
+      showToast(`⬇ Downloading ${files.length} file(s)…`);
+    }
+
+    // ── ADD SUBMISSION FILES TO EXISTING POST ─────────────────────────────────
+
+    function openAddToExistingFromSub(sub) {
+      // Switch to the existing post tab and pre-populate with this submission's files
+      const tabBtn = document.querySelector('.tab-btn:nth-child(2)');
+      switchTab('existing', tabBtn);
+
+      // Store the submission so we can use its files in the upload modal
+      pendingSubForExisting = sub;
+
+      // Show a prompt to search for the target post
+      showToast('📁 Search for the post you want to add these files to below');
+
+      // Highlight the search bar
+      const searchInput = document.getElementById('ia-search');
+      if (searchInput) {
+        searchInput.focus();
+        searchInput.placeholder = `Search for post to add ${sub.files.length} file(s) from #${sub.id}…`;
+      }
+    }
+
+    // Override openAddModal to check if we have a pending submission
+    const _originalOpenAddModal = openAddModal;
+    function openAddModal(item) {
+      pendingIAItem = item;
+      addFiles = [];
+      document.getElementById('add-modal-title').textContent = `Add to: ${item.title}`;
+
+      const sub = pendingSubForExisting;
+      let fileRows = '';
+
+      if (sub && sub.files && sub.files.length > 0) {
+        // Pre-populate with submission files
+        fileRows = sub.files.map((f, i) => `
+          <div class="rename-row">
+            <div class="rename-thumb">${renderThumb(f)}</div>
+            <div class="rename-info">
+              <span class="rename-orig">Original: ${f.name}</span>
+              ${f.resolution ? `<span class="rename-res">📐 ${f.resolution}</span>` : ''}
+              <input class="modal-input" id="add-fname-${i}" value="${f.name}" style="margin-top:0.35rem;" placeholder="Rename before upload…">
+            </div>
+          </div>
+        `).join('');
+        // Store files for upload
+        pendingSubFiles = sub.files;
+      }
+
+      document.getElementById('add-modal-body').innerHTML = `
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;">
+          Item: <strong style="color:var(--text)">${item.identifier}</strong>
+          ${sub ? `<span style="color:var(--accent);margin-left:0.5rem;">· ${sub.files.length} file(s) from submission #${sub.id}</span>` : ''}
+        </p>
+        ${sub && sub.files.length > 0 ? `
+          <p class="modal-section-title" style="margin-bottom:0.75rem;">Files from Submission — rename before uploading</p>
+          ${fileRows}
+        ` : `
+          <div class="add-file-drop" id="add-drop">
+            <input type="file" multiple onchange="stageAddFiles(this.files)">
+            <p style="font-size:0.9rem;font-weight:600;">Drop files here or click to browse</p>
+            <p style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem;">Files will be renamed before uploading</p>
+          </div>
+          <div id="add-file-list" style="margin-top:1rem;display:flex;flex-direction:column;gap:0.5rem;"></div>
+        `}
+      `;
+      openModal('add-modal');
+    }
+
     // ── INIT ──────────────────────────────────────────────────────────────────
+    let pendingSubForExisting = null;
+    let pendingSubFiles = [];
     loadSubmissions();
     setInterval(loadSubmissions, 60000);
   </script>
