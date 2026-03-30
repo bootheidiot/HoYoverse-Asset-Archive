@@ -558,7 +558,10 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-        if (!res.ok) throw new Error();
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(`${res.status}: ${errData.error || 'Unknown error'}`);
+        }
         const data = await res.json();
         const found = allSubmissions.find(s => s.id === sub.id);
         if (found) {
@@ -569,8 +572,9 @@
         document.getElementById('modal-post-btn').textContent = 'Post to Archive.org';
         render();
         showToast(isRetry ? '↺ Retry submitted — check upload status.' : '✓ Approved — uploading to Archive.org…');
-      } catch {
-        showToast('Something went wrong. Please try again.');
+      } catch(err) {
+        console.error('postToArchive error:', err);
+        showToast(`Something went wrong: ${err.message}`);
       } finally {
         btn.disabled = false;
         document.getElementById('modal-spinner').style.display = 'none';
