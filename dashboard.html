@@ -640,11 +640,11 @@
       } else if (sub.status === 'approved') {
         actionsHtml = `
           <span style="color:var(--success);font-size:0.82rem;">✓ Approved — ${humanTime(sub.reviewedAt)}</span>
-          ${downloadAllBtn}
           ${!sub.r2Deleted
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
             : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`}
-          <button class="btn btn-delete" onclick="deleteSubmission('${sub.id}')">✕ Delete from History</button>
+          ${downloadAllBtn}
+          <button class="btn btn-delete" style="margin-left:auto;" onclick="deleteSubmission('${sub.id}')">✕ Delete from History</button>
           <span class="action-note">${(sub.files||[]).length} file(s)</span>
         `;
       } else {
