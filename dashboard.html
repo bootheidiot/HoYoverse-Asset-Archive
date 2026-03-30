@@ -649,6 +649,7 @@
       } else {
         actionsHtml = `
           <span style="color:var(--error);font-size:0.82rem;">✕ Rejected — ${humanTime(sub.reviewedAt)}</span>
+          <button class="btn btn-approve" onclick="openApprovalModal(${JSON.stringify(sub).replace(/"/g,'&quot;')})">✓ Approve &amp; Post</button>
           ${!sub.r2Deleted
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
             : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`}
@@ -824,20 +825,26 @@
 
     // ── DOWNLOAD ALL ──────────────────────────────────────────────────────────
 
-    function downloadAll(files) {
-      // Trigger downloads sequentially with a small delay to avoid browser blocking
-      files.forEach((f, i) => {
-        setTimeout(() => {
+    async function downloadAll(files) {
+      showToast(`⬇ Downloading ${files.length} file(s)…`);
+      for (let i = 0; i < files.length; i++) {
+        try {
+          const res = await fetch(files[i].url);
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          a.href = f.url;
-          a.download = f.name;
-          a.target = '_blank';
+          a.href = url;
+          a.download = files[i].name;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-        }, i * 600);
-      });
-      showToast(`⬇ Downloading ${files.length} file(s)…`);
+          URL.revokeObjectURL(url);
+          // Small delay between downloads
+          await new Promise(r => setTimeout(r, 500));
+        } catch(e) {
+          showToast(`⚠ Could not download ${files[i].name}`);
+        }
+      }
     }
 
     // ── ADD SUBMISSION FILES TO EXISTING POST ─────────────────────────────────
