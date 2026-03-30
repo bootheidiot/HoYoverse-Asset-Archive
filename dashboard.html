@@ -644,6 +644,7 @@
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
             : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`}
           ${downloadAllBtn}
+          <button class="btn btn-delete" style="margin-left:auto;" onclick="deleteSubmission('${sub.id}')">✕ Delete from History</button>
           <span class="action-note">${(sub.files||[]).length} file(s)</span>
         `;
       } else {
@@ -654,6 +655,7 @@
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
             : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`}
           ${downloadAllBtn}
+          <button class="btn btn-delete" onclick="deleteSubmission('${sub.id}')">✕ Delete from History</button>
           <span class="action-note">${(sub.files||[]).length} file(s)</span>
         `;
       }
@@ -820,6 +822,22 @@
       } finally {
         btn.disabled = false;
         btn.textContent = 'Upload Files';
+      }
+    }
+
+    async function deleteSubmission(id) {
+      if (!confirm('Permanently delete this submission from history? This cannot be undone.')) return;
+      const btn = document.querySelector(`#card-${id} .btn-delete[onclick*="deleteSubmission"]`);
+      if (btn) { btn.disabled = true; btn.textContent = 'Deleting…'; }
+      try {
+        const res = await fetch(`${BACKEND_URL}/submission/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error();
+        allSubmissions = allSubmissions.filter(s => s.id !== id);
+        render();
+        showToast('✕ Submission deleted from history.');
+      } catch {
+        showToast('Delete failed. Please try again.');
+        if (btn) { btn.disabled = false; btn.textContent = '✕ Delete from History'; }
       }
     }
 
