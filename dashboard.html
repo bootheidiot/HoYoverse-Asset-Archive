@@ -608,7 +608,7 @@
     function renderCard(sub) {
       const gameLabel = GAME_LABELS[sub.game] || sub.game;
 
-      const filesHtml = (sub.files || []).map(f => `
+      const filesHtml = (sub.files || []).map((f, fi) => `
         <div class="file-card">
           <div class="file-preview">${renderPreview(f)}</div>
           <div class="file-info">
@@ -617,7 +617,7 @@
               <span>${formatSize(f.size)}</span>
               ${f.resolution ? `<span>📐 ${f.resolution}</span>` : ''}
             </div>
-            ${f.url ? `<a class="file-download" href="${f.url}" download="${f.name}">⬇ Download</a>` : ''}
+            <a class="file-download" href="${BACKEND_URL}/download/${sub.id}/${fi}" download="${f.name}">⬇ Download</a>
           </div>
         </div>
       `).join('');
@@ -625,7 +625,7 @@
       // Download all button — only show if files have URLs
       const hasUrls = (sub.files || []).some(f => f.url);
       const downloadAllBtn = hasUrls
-        ? `<button class="btn btn-secondary" onclick="downloadAll(${JSON.stringify(sub.files.filter(f=>f.url).map(f=>({url:f.url,name:f.name}))).replace(/"/g,'&quot;')})">⬇ Download All</button>`
+        ? `<button class="btn btn-secondary" onclick="downloadAll('${sub.id}', ${JSON.stringify(sub.files.map((f,i)=>({name:f.name,index:i}))).replace(/"/g,'&quot;')})">⬇ Download All</button>`
         : '';
 
       let actionsHtml = '';
@@ -825,22 +825,22 @@
 
     // ── DOWNLOAD ALL ──────────────────────────────────────────────────────────
 
-    async function downloadAll(files) {
+    async function downloadAll(subId, files) {
       showToast(`⬇ Downloading ${files.length} file(s)…`);
       for (let i = 0; i < files.length; i++) {
         try {
-          const res = await fetch(files[i].url);
+          const url = `${BACKEND_URL}/download/${subId}/${i}`;
+          const res = await fetch(url);
+          if (!res.ok) throw new Error();
           const blob = await res.blob();
-          const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          a.href = url;
+          a.href = URL.createObjectURL(blob);
           a.download = files[i].name;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          // Small delay between downloads
-          await new Promise(r => setTimeout(r, 500));
+          URL.revokeObjectURL(a.href);
+          await new Promise(r => setTimeout(r, 600));
         } catch(e) {
           showToast(`⚠ Could not download ${files[i].name}`);
         }
