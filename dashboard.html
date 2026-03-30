@@ -29,29 +29,29 @@
     /* ── NAV ── */
     nav {
       background: var(--nav-bg); border-bottom: 1px solid var(--border);
-      padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem;
+      padding: 0 2rem; display: flex; align-items: stretch; gap: 1rem;
       position: sticky; top: 0; z-index: 200; backdrop-filter: blur(12px);
     }
+    .nav-left { display: flex; align-items: center; gap: 1rem; padding: 0.75rem 0; flex-shrink: 0; }
     .nav-brand { font-size: 1rem; font-weight: 700; }
     .nav-badge {
       background: var(--accent); color: #fff; font-size: 0.65rem; font-weight: 700;
       letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 3px;
     }
-    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 1rem; }
+    .nav-right { margin-left: auto; display: flex; align-items: center; gap: 1rem; flex-shrink: 0; }
     .pending-count { font-size: 0.85rem; color: var(--muted); }
     .pending-count strong { color: var(--accent); font-weight: 700; }
 
-    /* ── TABS ── */
+    /* ── TABS (now inside nav) ── */
     .tabs {
-      display: flex; gap: 0; border-bottom: 1px solid var(--border);
-      background: var(--nav-bg); backdrop-filter: blur(12px);
-      position: sticky; top: 57px; z-index: 199;
+      display: flex; gap: 0; align-items: stretch;
     }
     .tab-btn {
-      padding: 0.85rem 1.75rem; background: none; border: none;
+      padding: 0 1.5rem; background: none; border: none;
       color: var(--muted); font-family: 'Calibri', sans-serif;
       font-size: 0.88rem; font-weight: 600; cursor: pointer;
       border-bottom: 2px solid transparent; transition: all 0.15s;
+      height: 100%; display: flex; align-items: center;
     }
     .tab-btn:hover { color: var(--text); }
     .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -296,17 +296,18 @@
 <body>
 
   <nav>
-    <span class="nav-brand">HoYoverse Asset Archive</span>
-    <span class="nav-badge">Admin Dashboard</span>
+    <div class="nav-left">
+      <span class="nav-brand">HoYoverse Asset Archive</span>
+      <span class="nav-badge">Admin Dashboard</span>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('submissions', this)">Submissions</button>
+      <button class="tab-btn" onclick="switchTab('existing', this)">Add to Existing Post</button>
+    </div>
     <div class="nav-right">
       <span class="pending-count"><strong id="pending-num">—</strong> pending</span>
     </div>
   </nav>
-
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('submissions', this)">Submissions</button>
-    <button class="tab-btn" onclick="switchTab('existing', this)">Add to Existing Post</button>
-  </div>
 
   <main>
 
