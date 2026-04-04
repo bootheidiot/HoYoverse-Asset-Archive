@@ -875,7 +875,8 @@
         closeModal('add-modal');
         pendingSubForExisting = null;
         pendingSubFiles = [];
-        document.getElementById('ia-search').placeholder = 'Search your Archive.org items…';
+        const urlInput = document.getElementById('ia-url-input');
+        if (urlInput) urlInput.placeholder = 'https://archive.org/details/your-item-identifier';
         showToast('✓ Files uploaded to existing Archive.org post!');
       } catch {
         showToast('Upload failed. Please try again.');
