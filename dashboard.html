@@ -4,12 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="HAA Dashboard">
-  <meta name="theme-color" content="#9966CC">
-  <link rel="manifest" href="dashboard-manifest.json">
   <title>Review Dashboard — HoYoverse Asset Archive</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -347,16 +341,34 @@
           <h1>Add to Existing Post</h1>
         </div>
       </div>
-      <div class="ia-search-bar">
-        <input type="text" id="ia-search" placeholder="Search your Archive.org items…" oninput="searchIAItems()">
-        <button class="btn btn-primary" onclick="searchIAItems()">Search</button>
-      </div>
-      <div class="ia-items" id="ia-items-list">
-        <div class="empty-state">
-          <div class="empty-icon">🔍</div>
-          <strong>Search for an item above</strong>
-          <p>Your Archive.org uploads will appear here.</p>
+
+      <div style="max-width:680px;">
+        <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.7;">
+          Paste the URL of any Archive.org item you want to add files to.<br>
+          e.g. <code style="font-size:0.8rem;color:var(--accent);">https://archive.org/details/your-item-identifier</code>
+        </p>
+
+        <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;">
+          <input type="text" id="ia-url-input"
+            placeholder="https://archive.org/details/your-item-identifier"
+            style="flex:1;padding:0.75rem 1rem;background:var(--surface);border:1.5px solid var(--border);border-radius:4px;font-family:Calibri,sans-serif;font-size:0.92rem;color:var(--text);outline:none;backdrop-filter:blur(8px);"
+            oninput="this.style.borderColor='var(--border)'"
+            onkeydown="if(event.key==='Enter') loadIAItemFromUrl()">
+          <button class="btn btn-primary" onclick="loadIAItemFromUrl()">Load Post</button>
         </div>
+
+        <div id="ia-item-preview" style="display:none;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1.25rem;backdrop-filter:blur(8px);margin-bottom:1.5rem;">
+          <div style="display:flex;align-items:center;gap:1rem;">
+            <img id="ia-preview-thumb" src="" style="width:80px;height:50px;object-fit:cover;border-radius:4px;background:rgba(0,0,0,0.3);" onerror="this.style.display='none'">
+            <div>
+              <div id="ia-preview-title" style="font-size:1rem;font-weight:700;margin-bottom:0.2rem;"></div>
+              <div id="ia-preview-id" style="font-size:0.78rem;color:var(--accent);"></div>
+            </div>
+            <button class="btn btn-primary" style="margin-left:auto;" onclick="openAddModalForCurrentItem()">Add Files →</button>
+          </div>
+        </div>
+
+        <div id="ia-url-error" style="display:none;font-size:0.85rem;color:var(--error);margin-top:0.5rem;"></div>
       </div>
     </div>
 
@@ -741,36 +753,58 @@
 
     // ── ADD TO EXISTING POST ───────────────────────────────────────────────────
 
-    async function searchIAItems() {
-      const query = document.getElementById('ia-search').value.trim();
-      const list  = document.getElementById('ia-items-list');
-      list.innerHTML = `<div class="empty-state"><div class="empty-icon">⏳</div><strong>Searching…</strong></div>`;
+    let currentIAItem = null;
+
+    function extractIdentifier(input) {
+      input = input.trim();
+      // Handle full URLs like https://archive.org/details/some-identifier
+      const match = input.match(/archive\.org\/(?:details|download|metadata)\/([^\/\?#]+)/);
+      if (match) return match[1];
+      // Handle bare identifiers
+      if (input && !input.includes('/') && !input.includes(' ')) return input;
+      return null;
+    }
+
+    async function loadIAItemFromUrl() {
+      const input = document.getElementById('ia-url-input').value;
+      const preview = document.getElementById('ia-item-preview');
+      const errorEl = document.getElementById('ia-url-error');
+      const identifier = extractIdentifier(input);
+
+      preview.style.display = 'none';
+      errorEl.style.display = 'none';
+
+      if (!identifier) {
+        errorEl.textContent = 'Could not parse an identifier from that URL. Try pasting the full archive.org/details/... link.';
+        errorEl.style.display = 'block';
+        return;
+      }
 
       try {
-        const res = await fetch(`${BACKEND_URL}/ia-search?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`${BACKEND_URL}/ia-item?id=${encodeURIComponent(identifier)}`);
         if (!res.ok) throw new Error();
-        const items = await res.json();
+        const data = await res.json();
 
-        if (!items.length) {
-          list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><strong>No results found</strong></div>`;
+        if (data.error || !data.identifier) {
+          errorEl.textContent = `Item "${identifier}" not found on Archive.org.`;
+          errorEl.style.display = 'block';
           return;
         }
 
-        list.innerHTML = items.map(item => `
-          <div class="ia-item" onclick="openAddModal(${JSON.stringify(item).replace(/"/g,'&quot;')})">
-            <div class="ia-item-thumb">
-              ${item.thumb ? `<img src="${item.thumb}" loading="lazy">` : ''}
-            </div>
-            <div class="ia-item-info">
-              <div class="ia-item-title">${item.title}</div>
-              <div class="ia-item-id">${item.identifier}</div>
-            </div>
-            <button class="btn btn-secondary" style="flex-shrink:0;">Add Files →</button>
-          </div>
-        `).join('');
+        currentIAItem = data;
+        document.getElementById('ia-preview-title').textContent = data.title || data.identifier;
+        document.getElementById('ia-preview-id').textContent = data.identifier;
+        document.getElementById('ia-preview-thumb').src = `https://archive.org/services/img/${data.identifier}`;
+        preview.style.display = 'block';
+
       } catch {
-        list.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><strong>Search failed</strong><p>Check backend connection.</p></div>`;
+        errorEl.textContent = 'Could not load item — check backend connection.';
+        errorEl.style.display = 'block';
       }
+    }
+
+    function openAddModalForCurrentItem() {
+      if (currentIAItem) openAddModal(currentIAItem);
     }
 
     function openAddModal(item) {
@@ -959,21 +993,14 @@
     // ── ADD SUBMISSION FILES TO EXISTING POST ─────────────────────────────────
 
     function openAddToExistingFromSub(sub) {
-      // Switch to the existing post tab and pre-populate with this submission's files
       const tabBtn = document.querySelector('.tab-btn:nth-child(2)');
       switchTab('existing', tabBtn);
-
-      // Store the submission so we can use its files in the upload modal
       pendingSubForExisting = sub;
-
-      // Show a prompt to search for the target post
-      showToast('📁 Search for the post you want to add these files to below');
-
-      // Highlight the search bar
-      const searchInput = document.getElementById('ia-search');
-      if (searchInput) {
-        searchInput.focus();
-        searchInput.placeholder = `Search for post to add ${sub.files.length} file(s) from #${sub.id}…`;
+      showToast('📁 Paste the Archive.org post URL below, then click Load Post');
+      const input = document.getElementById('ia-url-input');
+      if (input) {
+        input.focus();
+        input.placeholder = `Paste Archive.org URL to add ${sub.files.length} file(s) from #${sub.id}…`;
       }
     }
 
