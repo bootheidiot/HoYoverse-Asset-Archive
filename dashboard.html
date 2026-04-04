@@ -860,6 +860,29 @@
             }),
           });
           if (!res.ok) throw new Error();
+
+          // Mark submission as approved in the database
+          await fetch(`${BACKEND_URL}/review/${pendingSubForExisting.id}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'approved',
+              title: pendingIAItem.title || pendingIAItem.identifier,
+              identifier: pendingIAItem.identifier,
+              description: '',
+              tags: '',
+              creator: 'HoYoverse',
+              fileNames,
+              addedToExisting: true,
+            }),
+          });
+
+          const sub = allSubmissions.find(s => s.id === pendingSubForExisting.id);
+          if (sub) {
+            sub.status = 'approved';
+            sub.reviewedAt = new Date().toISOString();
+            sub.archiveMeta = { identifier: pendingIAItem.identifier, title: pendingIAItem.title };
+          }
         } else {
           // Upload local files
           const formData = new FormData();
@@ -877,6 +900,7 @@
         pendingSubFiles = [];
         const urlInput = document.getElementById('ia-url-input');
         if (urlInput) urlInput.placeholder = 'https://archive.org/details/your-item-identifier';
+        render();
         showToast('✓ Files uploaded to existing Archive.org post!');
       } catch {
         showToast('Upload failed. Please try again.');
