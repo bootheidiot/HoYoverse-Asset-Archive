@@ -2,7 +2,7 @@
   "name": "HoYoverse Asset Archive — Dashboard",
   "short_name": "HoYoverse Asset Archive",
   "description": "HoYoverse Asset Archive Dashboard",
-  "start_url": "https://bootheidiot.github.io/HoYoverse-Asset-Archive/dashboard.html",
+  "start_url": "/HoYoverse-Asset-Archive/dashboard.html",
   "display": "standalone",
   "background_color": "#1a0f2e",
   "theme_color": "#9966CC",
