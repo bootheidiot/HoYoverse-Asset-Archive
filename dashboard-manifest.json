@@ -1,0 +1,17 @@
+{
+  "name": "HoYoverse Asset Archive — Dashboard",
+  "short_name": "HoYoverse Asset Archive",
+  "description": "HoYoverse Asset Archive Dashboard",
+  "start_url": "/hoyoverse-asset-archive/dashboard.html",
+  "display": "standalone",
+  "background_color": "#1a0f2e",
+  "theme_color": "#9966CC",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
