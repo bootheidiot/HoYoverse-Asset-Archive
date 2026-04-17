@@ -714,6 +714,12 @@
             ${sub.eventType  ? `<div class="card-meta-item"><span class="card-meta-label">Type</span><span class="card-meta-value">${sub.eventType}</span></div>` : ''}
             ${sub.contentType? `<div class="card-meta-item"><span class="card-meta-label">Content</span><span class="card-meta-value">${sub.contentType}</span></div>` : ''}
           </div>
+          ${sub.extraInfo ? `
+            <div style="padding:0.75rem 1.5rem;border-bottom:1px solid var(--border);background:rgba(153,102,204,0.06);">
+              <span style="font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);font-weight:600;">📝 Contributor Notes</span>
+              <p style="font-size:0.85rem;color:var(--muted);margin-top:0.35rem;line-height:1.6;white-space:pre-wrap;">${sub.extraInfo}</p>
+            </div>
+          ` : ''}
           <div class="file-grid">${filesHtml || '<p style="padding:1rem;color:var(--muted);">No files.</p>'}</div>
           <div class="card-actions">${actionsHtml}</div>
         </div>

@@ -277,9 +277,9 @@
       <p class="eyebrow">Open Submissions</p>
       <h1>Contribute to the Archive</h1>
       <p class="page-desc">
-        Upload your files and fill out details on them below.
+        Upload your files and fill out the details below.
         All submissions are reviewed before being added to the archive.
-        Thank you for contributing. 🙂
+        Thank you for helping preserve HoYoverse history.
       </p>
     </div>
 
@@ -295,7 +295,7 @@
             <path d="M6 26a4 4 0 01-4-4V10a4 4 0 014-4h6l2 3h12a4 4 0 014 4v9a4 4 0 01-4 4H6z" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           <p class="drop-label">Drop files here or click to browse</p>
-          <p class="drop-sub">Multiple files supported</p>
+          <p class="drop-sub">Multiple files supported — resolutions are detected automatically</p>
         </div>
         <div id="file-list"></div>
       </div>
@@ -310,12 +310,6 @@
             <option value="" disabled selected>Select a game…</option>
             <!-- ↓ Add games here -->
             <option value="zzz">Zenless Zone Zero (ZZZ)</option>
-            <option value="zzz">Genshin Impact</option>
-            <option value="zzz">Honkai Star Rail</option>
-            <option value="zzz">Honkai Impact 3rd</option>
-            <option value="zzz">Petit Planet</option>
-            <option value="zzz">Honkai: Nexus Anima</option>
-            <option value="zzz">Tears of Themis</option>
           </select>
         </div>
       </div>
@@ -326,7 +320,7 @@
 
         <div class="field">
           <label for="event-title">Event / Content Title <span class="required">*</span></label>
-          <input type="text" id="event-title" placeholder="e.g. New: Eridan Sunset (A)" oninput="validateForm()">
+          <input type="text" id="event-title" placeholder="e.g. Angels and Delusions of Muse" oninput="validateForm()">
           <p class="field-hint">The name of the event, story, or content this is from.</p>
         </div>
 
@@ -338,8 +332,9 @@
             <option value="Event">Event</option>
             <option value="Gacha Popup">Gacha Popup</option>
             <option value="TV Schedule">TV Schedule</option>
-            <option value="TV Schedule">Web Event</option>
-            <option value="TV Schedule">Deadly Assault</option>
+            <option value="Interlude">Interlude</option>
+            <option value="Story Quest">Story Quest</option>
+            <option value="Version Update">Version Update</option>
             <option value="other">Other (specify)…</option>
           </select>
           <input type="text" id="event-type-other" class="other-input" placeholder="Describe the event type…" oninput="validateForm()">
@@ -351,6 +346,8 @@
             <option value="" disabled selected>Select what this is…</option>
             <!-- ↓ Add content types here -->
             <option value="Animated Wallpaper">Animated Wallpaper</option>
+            <option value="Splash Art">Splash Art</option>
+            <option value="Loading Screen">Loading Screen</option>
             <option value="Cutscene">Cutscene</option>
             <option value="Trailer">Trailer</option>
             <option value="Music">Music</option>
@@ -358,6 +355,12 @@
             <option value="other">Other (specify)…</option>
           </select>
           <input type="text" id="content-type-other" class="other-input" placeholder="Describe what this is…" oninput="validateForm()">
+        </div>
+
+        <div class="field">
+          <label for="extra-info">Extra Info <span style="color:var(--muted);font-weight:400;font-size:0.78rem;">(optional)</span></label>
+          <textarea id="extra-info" placeholder="e.g. links, event info, livestream timestamps, notes for the reviewer…" style="width:100%;padding:0.7rem 0.9rem;background:var(--surface);border:1.5px solid var(--border);border-radius:4px;font-family:'Calibri',sans-serif;font-size:0.95rem;color:var(--text);outline:none;transition:border-color 0.15s;resize:vertical;min-height:90px;backdrop-filter:blur(8px);" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+          <p class="field-hint">This won't affect how your submission is processed — it's just notes for the archive maintainer.</p>
         </div>
       </div>
 
@@ -476,6 +479,7 @@
       formData.append('eventTitle',  document.getElementById('event-title').value.trim());
       formData.append('eventType',   getFieldValue('event-type', 'event-type-other'));
       formData.append('contentType', getFieldValue('content-type', 'content-type-other'));
+      formData.append('extraInfo',   document.getElementById('extra-info').value.trim());
       selectedFiles.forEach(f => formData.append('files', f));
 
       try {
@@ -489,10 +493,11 @@
         document.getElementById('event-title').value = '';
         document.getElementById('event-type').value = '';
         document.getElementById('content-type').value = '';
+        document.getElementById('extra-info').value = '';
         fileInput.value = '';
       } catch (err) {
         statusMsg.className = 'status error';
-        statusMsg.textContent = '✕ Something went wrong — please try again or reach out to the archive discord.';
+        statusMsg.textContent = '✕ Something went wrong — please try again or contact the archive maintainer on Discord.';
       } finally {
         document.getElementById('spinner').style.display = 'none';
         document.getElementById('submit-label').textContent = 'Submit for Review';
