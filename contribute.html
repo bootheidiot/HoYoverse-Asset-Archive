@@ -359,6 +359,12 @@
           </select>
           <input type="text" id="content-type-other" class="other-input" placeholder="Describe what this is…" oninput="validateForm()">
         </div>
+
+        <div class="field">
+          <label for="extra-info">Extra Info <span style="color:var(--muted);font-weight:400;font-size:0.78rem;">(optional)</span></label>
+          <textarea id="extra-info" placeholder="e.g. links, event info, livestream timestamps, notes for the reviewer…" style="width:100%;padding:0.7rem 0.9rem;background:var(--surface);border:1.5px solid var(--border);border-radius:4px;font-family:'Calibri',sans-serif;font-size:0.95rem;color:var(--text);outline:none;transition:border-color 0.15s;resize:vertical;min-height:90px;backdrop-filter:blur(8px);" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+          <p class="field-hint">This won't affect how your submission is processed — it's just notes for the archive maintainer.</p>
+        </div>
       </div>
 
       <!-- SUBMIT -->
@@ -476,6 +482,7 @@
       formData.append('eventTitle',  document.getElementById('event-title').value.trim());
       formData.append('eventType',   getFieldValue('event-type', 'event-type-other'));
       formData.append('contentType', getFieldValue('content-type', 'content-type-other'));
+      formData.append('extraInfo',   document.getElementById('extra-info').value.trim());
       selectedFiles.forEach(f => formData.append('files', f));
 
       try {
@@ -489,6 +496,7 @@
         document.getElementById('event-title').value = '';
         document.getElementById('event-type').value = '';
         document.getElementById('content-type').value = '';
+        document.getElementById('extra-info').value = '';
         fileInput.value = '';
       } catch (err) {
         statusMsg.className = 'status error';
