@@ -104,17 +104,13 @@
       line-height: 1.7;
     }
 
-    /* ── TOOLS GRID ── */
+
     .tools-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: 1.25rem;
     }
 
-    /* ── TOOL CARD ──
-       To add a new tool, copy one .tool-card block and update the fields.
-       Fields: tool name, author, description, link href, link label.
-    ── */
     .tool-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -180,7 +176,7 @@
 
     .tool-link svg { width: 12px; height: 12px; }
 
-    /* ── FOOTER ── */
+   
     footer {
       background: var(--footer-bg);
       border-top: 1px solid var(--border);
@@ -241,7 +237,7 @@
           </svg>
         </a>
       </div>
-
+      
       
       <div class="tool-card">
         <div class="tool-header">
@@ -260,7 +256,36 @@
         </a>
       </div>
     </div>
+    
   </main>
+    <main>
+    <div class="page-header">
+      <p class="eyebrow">Community</p>
+      <h1>Non-Community Tools</h1>
+      <p class="page-desc">
+        These tools were not made by the community but they are also very helpful.
+      </p>
+    </div>
+
+    <div class="tools-grid">
+
+
+      <div class="tool-card">
+        <div class="tool-header">
+          <span class="tool-name">https://github.com/Escartem/AnimeStudio</span>
+          <span class="tool-author">Escartem</span>
+        </div>
+        <p class="tool-desc">
+          A powerful tool that lets you map and browse in game assets for HoYo games and export them.
+
+        </p>
+        <a href="https://github.com/Escartem/AnimeStudio" target="_blank" rel="noopener" class="tool-link">
+          View on GitHub
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 8h8M8 4l4 4-4 4"/>
+          </svg>
+        </a>
+      </div>
 
   <script src="wallpaper.js"></script>
 </body>
