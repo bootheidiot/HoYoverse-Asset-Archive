@@ -107,69 +107,92 @@
     }
     .media-section-header span { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
     .media-section-toggle { font-size: 0.72rem; color: var(--muted); }
-    .media-grid { display: none; }
-    .media-grid.open {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 0.75rem; padding: 1rem 1.25rem;
-      border-top: 1px solid var(--border);
-    }
+    .media-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; padding: 1rem 1.25rem; border-top: 1px solid var(--border); }
+    .media-grid.open { display: grid; }
 
     /* ── LIGHTBOX ── */
     .lightbox {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.92);
-      z-index: 1000; display: none; align-items: center; justify-content: center;
-      flex-direction: column; gap: 1rem; backdrop-filter: blur(8px);
+      position: fixed; inset: 0; background: rgba(0,0,0,0.94);
+      z-index: 1000; display: none; flex-direction: column;
+      backdrop-filter: blur(8px);
     }
     .lightbox.open { display: flex; }
 
+    /* filename at top */
+    .lb-top {
+      position: fixed; top: 0; left: 0; right: 0;
+      padding: 1rem 4rem 1rem 1.5rem;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+      z-index: 1001; display: flex; flex-direction: column; gap: 0.2rem;
+      pointer-events: none;
+    }
+    .lb-name { font-size: 0.9rem; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-counter { font-size: 0.72rem; color: var(--muted); }
+
+    /* close button top right */
+    .lb-close {
+      position: fixed; top: 0.85rem; right: 1.25rem;
+      background: rgba(255,255,255,0.1); border: 1px solid var(--border);
+      color: var(--text); font-size: 1.1rem; width: 36px; height: 36px;
+      border-radius: 50%; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: all 0.15s; z-index: 1002;
+    }
+    .lb-close:hover { background: var(--error); border-color: var(--error); }
+
+    /* image fills the middle area */
     .lightbox-media {
-      max-width: 90vw; max-height: 78vh;
-      display: flex; align-items: center; justify-content: center; position: relative;
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 5rem 1rem 9rem; overflow: hidden;
     }
     .lightbox-media img, .lightbox-media video {
-      max-width: 90vw; max-height: 78vh;
+      max-width: 100%; max-height: 100%;
       object-fit: contain; border-radius: 4px;
       box-shadow: 0 8px 48px rgba(0,0,0,0.8);
     }
 
-    .lightbox-controls {
-      display: flex; align-items: center; gap: 1.5rem;
+    /* fixed bottom controls */
+    .lb-bottom {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 1.25rem 2rem 2rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
+      display: flex; align-items: center; justify-content: center;
+      gap: 1.5rem; z-index: 1001;
     }
     .lb-arrow {
-      background: rgba(255,255,255,0.1); border: 1px solid var(--border);
-      color: var(--text); font-size: 1.4rem; width: 44px; height: 44px;
+      background: rgba(255,255,255,0.12); border: 1px solid var(--border);
+      color: var(--text); font-size: 1.3rem; width: 46px; height: 46px;
       border-radius: 50%; cursor: pointer; display: flex; align-items: center;
       justify-content: center; transition: all 0.15s; flex-shrink: 0;
     }
     .lb-arrow:hover { background: var(--accent); border-color: var(--accent); }
-    .lb-arrow:disabled { opacity: 0.25; cursor: not-allowed; }
-
-    .lb-info {
-      display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
-      min-width: 0;
-    }
-    .lb-name { font-size: 0.82rem; color: var(--text); max-width: 60vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .lb-counter { font-size: 0.72rem; color: var(--muted); }
-
-    .lb-close {
-      position: fixed; top: 1.25rem; right: 1.5rem;
-      background: rgba(255,255,255,0.1); border: 1px solid var(--border);
-      color: var(--text); font-size: 1.2rem; width: 38px; height: 38px;
-      border-radius: 50%; cursor: pointer; display: flex; align-items: center;
-      justify-content: center; transition: all 0.15s;
-    }
-    .lb-close:hover { background: var(--error); border-color: var(--error); }
-
+    .lb-arrow:disabled { opacity: 0.2; cursor: not-allowed; }
     .lb-download {
-      font-size: 0.8rem; color: var(--accent); text-decoration: none;
-      font-weight: 700; border: 1px solid rgba(153,102,204,0.35);
-      padding: 0.4rem 0.9rem; border-radius: 4px; transition: all 0.15s;
-      cursor: pointer; background: none;
+      font-size: 0.82rem; color: #fff; font-weight: 700;
+      border: none; padding: 0.55rem 1.25rem; border-radius: 4px;
+      cursor: pointer; background: var(--accent); transition: filter 0.15s;
     }
-    .lb-download:hover { background: rgba(153,102,204,0.15); }
+    .lb-download:hover { filter: brightness(1.15); }
 
     /* clickable thumbnail */
     .media-preview { cursor: zoom-in; }
+
+    /* ── LOADING SPINNER ── */
+    .loading-overlay {
+      display: none; flex-direction: column; align-items: center;
+      justify-content: center; gap: 1rem; padding: 4rem 2rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; backdrop-filter: blur(8px);
+    }
+    .loading-overlay.visible { display: flex; }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 0.88rem; color: var(--muted); }
 
     /* ── STATS CHIP ── */
     .stats-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
@@ -290,7 +313,7 @@
   <main>
 
     <!-- ── INSTRUCTIONS ── -->
-    <div class="instructions">
+    <div class="instructions" id="instructionsPanel">
       <div class="instructions-header" onclick="toggleInstructions()">
         <h2>How to Find Your Cache Files</h2>
         <span class="instructions-toggle" id="instrToggle">▼ Show</span>
@@ -339,6 +362,12 @@
         <input type="file" id="folderInput" webkitdirectory multiple style="display:none;" onchange="handleFolderInput(this.files)">
         <span class="btn btn-ghost">📁 Upload Entire Folder</span>
       </label>
+    </div>
+
+    <!-- ── LOADING ── -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+      <span class="loading-text" id="loadingText">Processing files…</span>
     </div>
 
     <!-- ── RESULTS ── -->
@@ -463,8 +492,10 @@
       document.getElementById('categoriesContainer').classList.add('hidden');
       document.getElementById('bottomBar').classList.add('hidden');
       document.getElementById('emptyState').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('visible');
       document.getElementById('dropZone').classList.remove('hidden');
       document.getElementById('uploadBtns').classList.remove('hidden');
+      document.getElementById('instructionsPanel').classList.remove('hidden');
       document.getElementById('fileInput').value = '';
       document.getElementById('folderInput').value = '';
     }
@@ -598,6 +629,8 @@
       document.getElementById('bottomLabel').textContent = `${total} unique links extracted from ${fileNames.length} file(s)`;
       document.getElementById('dropZone').classList.add('hidden');
       document.getElementById('uploadBtns').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.remove('visible');
+      document.getElementById('instructionsPanel').classList.add('hidden');
       document.getElementById('results').classList.remove('hidden');
       document.getElementById('categoriesContainer').classList.remove('hidden');
       document.getElementById('bottomBar').classList.remove('hidden');
@@ -606,10 +639,22 @@
     // ── FILE PROCESSING ────────────────────────────────────────────────────────
     async function processFiles(files) {
       if (!files.length) return;
+
+      // Show loading
+      document.getElementById('dropZone').classList.add('hidden');
+      document.getElementById('uploadBtns').classList.add('hidden');
+      document.getElementById('loadingOverlay').classList.add('visible');
+      document.getElementById('loadingText').textContent = `Processing ${files.length} file(s)…`;
+
+      // Yield to browser to render the spinner before blocking work
+      await new Promise(r => setTimeout(r, 50));
+
       const combined = new Set();
       const names = [];
 
       for (const file of files) {
+        document.getElementById('loadingText').textContent = `Reading: ${file.name}`;
+        await new Promise(r => setTimeout(r, 10)); // yield per file
         const buf = await file.arrayBuffer();
         const urls = extractUrls(buf);
         urls.forEach(u => combined.add(u));
@@ -724,16 +769,16 @@
   <!-- ── LIGHTBOX ── -->
   <div class="lightbox" id="lightbox" onclick="lbBgClick(event)">
     <button class="lb-close" onclick="closeLightbox()">✕</button>
+    <div class="lb-top">
+      <span class="lb-name" id="lbName"></span>
+      <span class="lb-counter" id="lbCounter"></span>
+    </div>
     <div class="lightbox-media" id="lbMedia"></div>
-    <div class="lightbox-controls">
+    <div class="lb-bottom">
       <button class="lb-arrow" id="lbPrev" onclick="lbNav(-1)">&#8592;</button>
-      <div class="lb-info">
-        <span class="lb-name" id="lbName"></span>
-        <span class="lb-counter" id="lbCounter"></span>
-      </div>
+      <button class="lb-download" onclick="lbDownloadCurrent()">⬇ Download</button>
       <button class="lb-arrow" id="lbNext" onclick="lbNav(1)">&#8594;</button>
     </div>
-    <button class="lb-download" onclick="lbDownloadCurrent()">⬇ Download</button>
   </div>
 
 </body>
