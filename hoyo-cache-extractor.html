@@ -91,29 +91,97 @@
     .drop-zone h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
     .drop-zone p { font-size: 0.82rem; color: var(--muted); }
 
-    /* ── STATS BAR ── */
-    .stats-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
-    .stat-chip {
-      display: flex; align-items: center; gap: 0.5rem;
-      padding: 0.4rem 0.85rem; background: var(--surface);
-      border: 1px solid var(--border); border-radius: 5px;
-      font-size: 0.78rem; backdrop-filter: blur(8px);
+    /* ── STATS BAR COLLAPSIBLE ── */
+    .stats-bar-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; backdrop-filter: blur(8px); }
+    .stats-bar-header { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 1rem; background: var(--surface2); cursor: pointer; border-bottom: 1px solid var(--border); }
+    .stats-bar-header span { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+    .stats-bar-toggle { font-size: 0.72rem; color: var(--muted); }
+    .stats-bar-body { padding: 0.75rem 1rem; display: none; }
+    .stats-bar-body.open { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+
+    /* ── MEDIA SECTION COLLAPSIBLE ── */
+    .media-section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.6rem 1.25rem; cursor: pointer;
+      border-top: 1px solid var(--border); background: var(--surface2);
     }
+    .media-section-header span { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    .media-section-toggle { font-size: 0.72rem; color: var(--muted); }
+    .media-grid { display: none; }
+    .media-grid.open {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem; padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.92);
+      z-index: 1000; display: none; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem; backdrop-filter: blur(8px);
+    }
+    .lightbox.open { display: flex; }
+
+    .lightbox-media {
+      max-width: 90vw; max-height: 78vh;
+      display: flex; align-items: center; justify-content: center; position: relative;
+    }
+    .lightbox-media img, .lightbox-media video {
+      max-width: 90vw; max-height: 78vh;
+      object-fit: contain; border-radius: 4px;
+      box-shadow: 0 8px 48px rgba(0,0,0,0.8);
+    }
+
+    .lightbox-controls {
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+    .lb-arrow {
+      background: rgba(255,255,255,0.1); border: 1px solid var(--border);
+      color: var(--text); font-size: 1.4rem; width: 44px; height: 44px;
+      border-radius: 50%; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: all 0.15s; flex-shrink: 0;
+    }
+    .lb-arrow:hover { background: var(--accent); border-color: var(--accent); }
+    .lb-arrow:disabled { opacity: 0.25; cursor: not-allowed; }
+
+    .lb-info {
+      display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+      min-width: 0;
+    }
+    .lb-name { font-size: 0.82rem; color: var(--text); max-width: 60vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-counter { font-size: 0.72rem; color: var(--muted); }
+
+    .lb-close {
+      position: fixed; top: 1.25rem; right: 1.5rem;
+      background: rgba(255,255,255,0.1); border: 1px solid var(--border);
+      color: var(--text); font-size: 1.2rem; width: 38px; height: 38px;
+      border-radius: 50%; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; transition: all 0.15s;
+    }
+    .lb-close:hover { background: var(--error); border-color: var(--error); }
+
+    .lb-download {
+      font-size: 0.8rem; color: var(--accent); text-decoration: none;
+      font-weight: 700; border: 1px solid rgba(153,102,204,0.35);
+      padding: 0.4rem 0.9rem; border-radius: 4px; transition: all 0.15s;
+      cursor: pointer; background: none;
+    }
+    .lb-download:hover { background: rgba(153,102,204,0.15); }
+
+    /* clickable thumbnail */
+    .media-preview { cursor: zoom-in; }
+
+    /* ── STATS CHIP ── */
+    .stats-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+    .stat-chip { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.85rem; background: var(--surface); border: 1px solid var(--border); border-radius: 5px; font-size: 0.78rem; backdrop-filter: blur(8px); }
     .stat-chip .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .stat-chip .count { font-weight: 700; }
-    .file-tag {
-      font-size: 0.75rem; color: var(--accent); background: rgba(153,102,204,0.12);
-      padding: 0.25rem 0.6rem; border-radius: 3px; border: 1px solid rgba(153,102,204,0.25);
-    }
+    .file-tag { font-size: 0.75rem; color: var(--accent); background: rgba(153,102,204,0.12); padding: 0.25rem 0.6rem; border-radius: 3px; border: 1px solid rgba(153,102,204,0.25); }
 
     /* ── CATEGORIES ── */
     .categories { display: flex; flex-direction: column; gap: 1.25rem; }
     .category { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; backdrop-filter: blur(8px); }
-    .category-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border);
-      background: var(--surface2);
-    }
+    .category-header { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border); background: var(--surface2); }
     .category-title { display: flex; align-items: center; gap: 0.6rem; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
     .cat-badge { padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.7rem; font-weight: 700; }
     .category-actions { display: flex; gap: 0.5rem; }
@@ -429,20 +497,28 @@
         return;
       }
 
-      // Stats bar
+      // Stats bar — collapsible, starts collapsed
       const statsBar = document.getElementById('statsBar');
-      statsBar.innerHTML = fileNames.map(n => `<span class="file-tag">${n}</span>`).join('');
+      let chipsHtml = fileNames.map(n => `<span class="file-tag">${n}</span>`).join('');
       CATEGORIES.forEach(cat => {
         const items = allLinks[cat.key];
         if (!items.length) return;
-        statsBar.innerHTML += `
+        chipsHtml += `
           <div class="stat-chip">
             <span class="dot dot-${cat.cls}"></span>
             <span class="count c-${cat.cls}">${items.length}</span>
             <span style="color:var(--muted)">${cat.label}</span>
           </div>`;
       });
-      statsBar.innerHTML += `<div class="stat-chip"><span class="count">${total}</span><span style="color:var(--muted)">total (deduped)</span></div>`;
+      chipsHtml += `<div class="stat-chip"><span class="count">${total}</span><span style="color:var(--muted)">total (deduped)</span></div>`;
+      statsBar.innerHTML = `
+        <div class="stats-bar-wrap">
+          <div class="stats-bar-header" onclick="toggleStatsBar()">
+            <span>File Summary — ${total} links from ${fileNames.length} file(s)</span>
+            <span class="stats-bar-toggle" id="statsBarToggle">▼ Show</span>
+          </div>
+          <div class="stats-bar-body" id="statsBarBody">${chipsHtml}</div>
+        </div>`;
 
       // Categories
       const container = document.getElementById('categoriesContainer');
@@ -467,7 +543,13 @@
             </div>
           </div>
           <div class="link-list" id="list-${cat.key}"></div>
-          ${cat.isMedia ? `<div class="media-grid" id="media-${cat.key}"></div>` : ''}
+          ${cat.isMedia ? `
+            <div class="media-section-header" onclick="toggleMediaSection('${cat.key}')">
+              <span>Previews (${items.length})</span>
+              <span class="media-section-toggle" id="media-toggle-${cat.key}">▼ Show Previews</span>
+            </div>
+            <div class="media-grid" id="media-${cat.key}"></div>
+          ` : ''}
         `;
 
         const list = div.querySelector(`#list-${cat.key}`);
@@ -475,7 +557,6 @@
           const item = document.createElement('div');
           item.className = 'link-item';
           const displayExt = ext.replace('.', '') || cat.cls.toUpperCase();
-          const safeName = url.split('/').pop().split('?')[0] || 'file';
           item.innerHTML = `
             <span class="ext-tag ext-${cat.cls}">${displayExt}</span>
             <span class="link-text" title="${url}">${url}</span>
@@ -484,25 +565,27 @@
           list.appendChild(item);
         });
 
-        // Media previews
+        // Media previews — collapsed by default, with lightbox on click
         if (cat.isMedia) {
           const mediaGrid = div.querySelector(`#media-${cat.key}`);
-          items.forEach(({ url, ext }) => {
+          items.forEach(({ url, ext }, idx) => {
             const card = document.createElement('div');
             card.className = 'media-card';
             const safeName = url.split('/').pop().split('?')[0] || 'file';
             const isVideo = ['.webm','.mp4','.mov','.avi'].includes(ext);
+            const safeUrl = url.replace(/'/g, "\\'");
+            const safeName2 = safeName.replace(/'/g, "\\'");
 
             card.innerHTML = `
-              <div class="media-preview">
+              <div class="media-preview" onclick="openLightbox('${cat.key}', ${idx})" title="Click to enlarge">
                 ${isVideo
-                  ? `<video src="${url}" controls preload="metadata" style="width:100%;height:100%;object-fit:cover;" onerror="this.outerHTML='<span class=media-err>Could not load video</span>'"></video>`
-                  : `<img src="${url}" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.outerHTML='<span class=media-err>Could not load image</span>'">`
+                  ? `<video src="${url}" preload="metadata" style="width:100%;height:100%;object-fit:cover;" onerror="this.outerHTML='<span class=media-err>Could not load</span>'"></video>`
+                  : `<img src="${url}" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.outerHTML='<span class=media-err>Could not load</span>'">`
                 }
               </div>
               <div class="media-info">
                 <span class="media-name" title="${safeName}">${safeName}</span>
-                <a class="media-dl" href="#" onclick="event.preventDefault();downloadUrl('${url.replace(/'/g,"\\'")}','${safeName.replace(/'/g,"\\'")}')">⬇ Download</a>
+                <a class="media-dl" href="#" onclick="event.preventDefault();downloadUrl('${safeUrl}','${safeName2}')">⬇ Download</a>
               </div>
             `;
             mediaGrid.appendChild(card);
@@ -554,6 +637,104 @@
       const files = [...e.dataTransfer.files];
       if (files.length) processFiles(files);
     });
+
+    // ── STATS BAR COLLAPSIBLE ─────────────────────────────────────────────────
+    function toggleStatsBar() {
+      const body = document.getElementById('statsBarBody');
+      const toggle = document.getElementById('statsBarToggle');
+      const open = body.classList.toggle('open');
+      toggle.textContent = open ? '▲ Hide' : '▼ Show';
+    }
+
+    // ── MEDIA SECTION COLLAPSIBLE ─────────────────────────────────────────────
+    function toggleMediaSection(catKey) {
+      const grid = document.getElementById(`media-${catKey}`);
+      const toggle = document.getElementById(`media-toggle-${catKey}`);
+      const open = grid.classList.toggle('open');
+      toggle.textContent = open ? '▲ Hide Previews' : '▼ Show Previews';
+    }
+
+    // ── LIGHTBOX ──────────────────────────────────────────────────────────────
+    let lbItems  = []; // { url, name, isVideo }
+    let lbIndex  = 0;
+
+    function openLightbox(catKey, idx) {
+      const cat = CATEGORIES.find(c => c.key === catKey);
+      lbItems = (allLinks[catKey] || []).map(({ url, ext }) => ({
+        url,
+        name: url.split('/').pop().split('?')[0] || 'file',
+        isVideo: ['.webm','.mp4','.mov','.avi'].includes(ext),
+      }));
+      lbIndex = idx;
+      renderLightbox();
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('open');
+      document.body.style.overflow = '';
+      // Pause any playing video
+      const vid = document.querySelector('#lbMedia video');
+      if (vid) vid.pause();
+    }
+
+    function lbBgClick(e) {
+      if (e.target === document.getElementById('lightbox')) closeLightbox();
+    }
+
+    function renderLightbox() {
+      const item = lbItems[lbIndex];
+      if (!item) return;
+      const media = document.getElementById('lbMedia');
+      media.innerHTML = item.isVideo
+        ? `<video src="${item.url}" controls autoplay style="max-width:90vw;max-height:78vh;object-fit:contain;border-radius:4px;" onerror="this.outerHTML='<p style=color:var(--muted)>Could not load video</p>'"></video>`
+        : `<img src="${item.url}" style="max-width:90vw;max-height:78vh;object-fit:contain;border-radius:4px;" onerror="this.outerHTML='<p style=color:var(--muted)>Could not load image</p>'">`;
+      document.getElementById('lbName').textContent = item.name;
+      document.getElementById('lbCounter').textContent = `${lbIndex + 1} / ${lbItems.length}`;
+      document.getElementById('lbPrev').disabled = lbIndex === 0;
+      document.getElementById('lbNext').disabled = lbIndex === lbItems.length - 1;
+    }
+
+    function lbNav(dir) {
+      const next = lbIndex + dir;
+      if (next < 0 || next >= lbItems.length) return;
+      // Pause current video before switching
+      const vid = document.querySelector('#lbMedia video');
+      if (vid) vid.pause();
+      lbIndex = next;
+      renderLightbox();
+    }
+
+    function lbDownloadCurrent() {
+      const item = lbItems[lbIndex];
+      if (item) downloadUrl(item.url, item.name);
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', e => {
+      if (!document.getElementById('lightbox').classList.contains('open')) return;
+      if (e.key === 'ArrowLeft')  lbNav(-1);
+      if (e.key === 'ArrowRight') lbNav(1);
+      if (e.key === 'Escape')     closeLightbox();
+    });
+
   </script>
+
+  <!-- ── LIGHTBOX ── -->
+  <div class="lightbox" id="lightbox" onclick="lbBgClick(event)">
+    <button class="lb-close" onclick="closeLightbox()">✕</button>
+    <div class="lightbox-media" id="lbMedia"></div>
+    <div class="lightbox-controls">
+      <button class="lb-arrow" id="lbPrev" onclick="lbNav(-1)">&#8592;</button>
+      <div class="lb-info">
+        <span class="lb-name" id="lbName"></span>
+        <span class="lb-counter" id="lbCounter"></span>
+      </div>
+      <button class="lb-arrow" id="lbNext" onclick="lbNav(1)">&#8594;</button>
+    </div>
+    <button class="lb-download" onclick="lbDownloadCurrent()">⬇ Download</button>
+  </div>
+
 </body>
 </html>
