@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <title>HoYo Cache Extractor — HoYoverse Asset Archive</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #1a0f2e;
+      --surface:   rgba(255,255,255,0.07);
+      --surface2:  rgba(255,255,255,0.04);
+      --text:      #ffffff;
+      --muted:     rgba(255,255,255,0.6);
+      --accent:    #9966CC;
+      --border:    rgba(255,255,255,0.15);
+      --nav-bg:    rgba(20,10,40,0.85);
+      --footer-bg: rgba(15,8,30,0.9);
+      --error:     #ff6b6b;
+      --success:   #6bffb8;
+      /* category colours */
+      --c-img:  #6eb8ff;
+      --c-vid:  #ff9e6e;
+      --c-json: #c96eff;
+      --c-api:  #7fff6e;
+      --c-other:#888899;
+    }
+
+    body * { text-shadow: 0 1px 6px rgba(0,0,0,0.8), 0 2px 16px rgba(0,0,0,0.5); }
+
+    html { min-height: 100%; background: var(--bg); transition: background 1.2s ease; }
+    body { min-height: 100%; background: transparent; color: var(--text); font-family: 'Calibri', sans-serif; font-weight: 400; }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--nav-bg); border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem; display: flex; align-items: center; gap: 1rem;
+      backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100;
+    }
+    nav a { font-size: 0.82rem; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 0.4rem; transition: color 0.15s; }
+    nav a:hover { color: var(--text); }
+    nav a svg { width: 12px; height: 12px; }
+    .nav-title { margin-left: auto; font-size: 1rem; font-weight: 700; color: var(--text); }
+
+    /* ── MAIN ── */
+    main { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem 6rem; display: flex; flex-direction: column; gap: 2rem; position: relative; z-index: 1; }
+
+    /* ── INSTRUCTIONS ── */
+    .instructions {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; overflow: hidden; backdrop-filter: blur(8px);
+    }
+    .instructions-header {
+      padding: 0.85rem 1.25rem; background: var(--surface2);
+      border-bottom: 1px solid var(--border); display: flex;
+      align-items: center; justify-content: space-between; cursor: pointer;
+    }
+    .instructions-header h2 { font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+    .instructions-toggle { font-size: 0.75rem; color: var(--muted); }
+    .instructions-body { padding: 1.5rem; display: none; }
+    .instructions-body.open { display: block; }
+
+    .instr-section { margin-bottom: 1.5rem; }
+    .instr-section:last-child { margin-bottom: 0; }
+    .instr-section h3 { font-size: 0.88rem; font-weight: 700; color: var(--accent); margin-bottom: 0.75rem; }
+    .instr-section p, .instr-section li { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-bottom: 0.4rem; }
+    .instr-section ol { padding-left: 1.25rem; }
+    .instr-note {
+      background: rgba(255,200,80,0.08); border: 1px solid rgba(255,200,80,0.25);
+      border-radius: 4px; padding: 0.75rem 1rem; font-size: 0.82rem;
+      color: #ffd060; margin-top: 0.75rem; line-height: 1.6;
+    }
+    code {
+      background: rgba(153,102,204,0.15); border: 1px solid rgba(153,102,204,0.3);
+      border-radius: 3px; padding: 0.1rem 0.4rem; font-size: 0.82rem;
+      color: #cc99ff; font-family: monospace;
+    }
+
+    /* ── DROP ZONE ── */
+    .drop-zone {
+      border: 2px dashed var(--border); border-radius: 6px;
+      background: var(--surface); padding: 3.5rem 2rem;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+      position: relative; backdrop-filter: blur(8px);
+    }
+    .drop-zone:hover, .drop-zone.dragover { border-color: var(--accent); background: rgba(153,102,204,0.1); }
+    .drop-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .drop-icon { font-size: 2.5rem; margin-bottom: 1rem; display: block; }
+    .drop-zone h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .drop-zone p { font-size: 0.82rem; color: var(--muted); }
+
+    /* ── STATS BAR ── */
+    .stats-bar { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+    .stat-chip {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.4rem 0.85rem; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 5px;
+      font-size: 0.78rem; backdrop-filter: blur(8px);
+    }
+    .stat-chip .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .stat-chip .count { font-weight: 700; }
+    .file-tag {
+      font-size: 0.75rem; color: var(--accent); background: rgba(153,102,204,0.12);
+      padding: 0.25rem 0.6rem; border-radius: 3px; border: 1px solid rgba(153,102,204,0.25);
+    }
+
+    /* ── CATEGORIES ── */
+    .categories { display: flex; flex-direction: column; gap: 1.25rem; }
+    .category { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; backdrop-filter: blur(8px); }
+    .category-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+    }
+    .category-title { display: flex; align-items: center; gap: 0.6rem; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .cat-badge { padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.7rem; font-weight: 700; }
+    .category-actions { display: flex; gap: 0.5rem; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      padding: 0.4rem 0.85rem; border-radius: 4px; font-size: 0.75rem;
+      font-family: 'Calibri', sans-serif; font-weight: 700; cursor: pointer;
+      border: 1px solid transparent; transition: all 0.15s; letter-spacing: 0.03em;
+    }
+    .btn-ghost { background: transparent; border-color: var(--border); color: var(--muted); }
+    .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+    .btn-accent { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .btn-accent:hover { filter: brightness(1.15); }
+    .btn-copy { background: transparent; color: var(--accent); border-color: rgba(153,102,204,0.35); }
+    .btn-copy:hover { background: rgba(153,102,204,0.1); }
+    .btn-copy.copied { color: var(--success); border-color: rgba(107,255,184,0.35); }
+
+    /* ── LINK LIST ── */
+    .link-list { padding: 0.25rem 0; max-height: 260px; overflow-y: auto; }
+    .link-list::-webkit-scrollbar { width: 4px; }
+    .link-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .link-item {
+      display: flex; align-items: center; padding: 0.5rem 1.25rem;
+      gap: 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.03);
+      transition: background 0.1s;
+    }
+    .link-item:last-child { border-bottom: none; }
+    .link-item:hover { background: rgba(255,255,255,0.03); }
+    .link-text { font-size: 0.75rem; color: var(--muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: monospace; }
+    .link-item:hover .link-text { color: var(--text); }
+    .ext-tag { font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 3px; flex-shrink: 0; text-transform: uppercase; opacity: 0.85; }
+    .copy-single { opacity: 0; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 0.75rem; padding: 0.15rem 0.4rem; border-radius: 3px; transition: all 0.15s; flex-shrink: 0; }
+    .link-item:hover .copy-single { opacity: 1; }
+    .copy-single:hover { color: var(--accent); }
+
+    /* ── MEDIA PREVIEWS ── */
+    .media-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 0.75rem; padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .media-card {
+      background: rgba(0,0,0,0.25); border: 1px solid var(--border);
+      border-radius: 4px; overflow: hidden; display: flex; flex-direction: column;
+    }
+    .media-preview {
+      width: 100%; aspect-ratio: 16/9; background: rgba(0,0,0,0.4);
+      display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
+    }
+    .media-preview img, .media-preview video { width: 100%; height: 100%; object-fit: cover; }
+    .media-preview .media-err { font-size: 0.7rem; color: var(--muted); text-align: center; padding: 0.5rem; }
+    .media-info { padding: 0.5rem 0.6rem; display: flex; flex-direction: column; gap: 0.3rem; }
+    .media-name { font-size: 0.7rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .media-dl {
+      font-size: 0.68rem; color: var(--accent); text-decoration: none; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 0.25rem; transition: opacity 0.15s;
+    }
+    .media-dl:hover { opacity: 0.75; }
+
+    /* ── BOTTOM BAR ── */
+    .bottom-bar {
+      display: flex; gap: 0.75rem; align-items: center;
+      padding: 1rem 1.25rem; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 6px; backdrop-filter: blur(8px);
+    }
+    .bottom-bar span { font-size: 0.85rem; color: var(--muted); flex: 1; }
+
+    /* colour helpers */
+    .c-img  { color: var(--c-img);  } .c-vid  { color: var(--c-vid);  } .c-api  { color: var(--c-api);  } .c-json { color: var(--c-json); } .c-other{ color: var(--c-other); }
+    .dot-img  { background: var(--c-img);  } .dot-vid  { background: var(--c-vid);  } .dot-api  { background: var(--c-api);  } .dot-json { background: var(--c-json); } .dot-other{ background: var(--c-other); }
+    .badge-img  { background: rgba(110,184,255,0.12); color: var(--c-img);  }
+    .badge-vid  { background: rgba(255,158,110,0.12); color: var(--c-vid);  }
+    .badge-api  { background: rgba(127,255,110,0.12); color: var(--c-api);  }
+    .badge-json { background: rgba(201,110,255,0.12); color: var(--c-json); }
+    .badge-other{ background: rgba(136,136,153,0.12); color: var(--c-other); }
+    .ext-img  { background: rgba(110,184,255,0.1); color: var(--c-img);  }
+    .ext-vid  { background: rgba(255,158,110,0.1); color: var(--c-vid);  }
+    .ext-api  { background: rgba(127,255,110,0.1); color: var(--c-api);  }
+    .ext-json { background: rgba(201,110,255,0.1); color: var(--c-json); }
+    .ext-other{ background: rgba(255,255,255,0.05); color: var(--c-other); }
+
+    .hidden { display: none !important; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--footer-bg); border-top: 1px solid var(--border);
+      padding: 1.25rem 2rem; text-align: center; font-size: 0.85rem;
+      color: var(--muted); backdrop-filter: blur(12px); position: relative; z-index: 1;
+    }
+    footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 8H3M7 4L3 8l4 4"/></svg>
+      Home
+    </a>
+    <span class="nav-title">HoYo Cache Extractor</span>
+  </nav>
+
+  <main>
+
+    <!-- ── INSTRUCTIONS ── -->
+    <div class="instructions">
+      <div class="instructions-header" onclick="toggleInstructions()">
+        <h2>How to Find Your Cache Files</h2>
+        <span class="instructions-toggle" id="instrToggle">▼ Show</span>
+      </div>
+      <div class="instructions-body" id="instrBody">
+
+        <div class="instr-section">
+          <h3>HoYo Launcher Assets (HYP)</h3>
+          <ol>
+            <li>Press <code>Windows + R</code>, type <code>%appdata%</code> and hit Enter.</li>
+            <li>Navigate to: <code>\Roaming\Cognosphere\HYP\1_0\fedata\Cache\Cache_Data</code></li>
+            <li>Drop the <code>data_1</code> file below. This is the main file for launcher videos and images, but you can upload any other cache files here to browse their contents.</li>
+          </ol>
+          <div class="instr-note">
+            Some players may also have a <code>HYP\1_1\</code> folder or a <code>HYP\beta\</code> folder if you have participated in any betas. These folders contain additional data. If you don't find what you're looking for, check the same directory path but replace <code>1_0</code> with one of these other folder names.
+          </div>
+        </div>
+
+        <div class="instr-section">
+          <h3>In-Game Web Assets</h3>
+          <ol>
+            <li>Open the HoYo Launcher and click the three lines next to the Start Game button on the game you want to extract from.</li>
+            <li>Click View Screenshot, then go back one folder to reach the game's root directory.</li>
+            <li>Navigate to: <code>[Your Game]_Data\webCaches</code></li>
+            <li>You can upload an individual cache folder or the entire webCaches folder to browse all events and browser assets at once.</li>
+            <li>Inside whichever cache folder you choose, go to <code>Cache\Cache_Data</code> and upload the <code>data_1</code> file. This is the primary location for cached data, but you can upload other files here too.</li>
+          </ol>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── DROP ZONE ── -->
+    <div class="drop-zone" id="dropZone">
+      <input type="file" id="fileInput" multiple webkitdirectory="false" accept="*/*">
+      <span class="drop-icon">📂</span>
+      <h2>Drop your cache files here</h2>
+      <p>Multiple files supported — drop a whole folder or individual files</p>
+      <p style="margin-top:0.5rem;font-size:0.75rem;">All processing happens locally in your browser. Nothing is uploaded.</p>
+    </div>
+
+    <!-- folder upload button (separate since webkitdirectory can't mix with normal file input) -->
+    <div style="display:flex;gap:0.75rem;align-items:center;" id="uploadBtns">
+      <span style="font-size:0.82rem;color:var(--muted);">Or:</span>
+      <label style="cursor:pointer;">
+        <input type="file" id="folderInput" webkitdirectory multiple style="display:none;" onchange="handleFolderInput(this.files)">
+        <span class="btn btn-ghost">📁 Upload Entire Folder</span>
+      </label>
+    </div>
+
+    <!-- ── RESULTS ── -->
+    <div id="results" class="hidden">
+      <div class="stats-bar" id="statsBar"></div>
+    </div>
+
+    <div id="categoriesContainer" class="categories hidden"></div>
+
+    <div id="bottomBar" class="bottom-bar hidden">
+      <span id="bottomLabel"></span>
+      <button class="btn btn-copy" id="copyAllBtn" onclick="copyAll()">⎘ Copy All Links</button>
+      <button class="btn btn-accent" onclick="startOver()">↩ Start Over</button>
+    </div>
+
+    <div id="emptyState" class="hidden" style="text-align:center;padding:4rem 2rem;color:var(--muted);font-size:0.9rem;">
+      No URLs found in the uploaded file(s).
+    </div>
+
+  </main>
+
+  <footer>
+    HoYoverse Asset Archive &mdash;
+    <a href="https://archive.org/details/@bootheidiot/uploads" target="_blank">View on Internet Archive</a>
+  </footer>
+
+  <script src="wallpaper.js"></script>
+  <script>
+    const CATEGORIES = [
+      { key: 'images', label: 'Images',        exts: ['.png','.jpg','.jpeg','.webp','.gif','.svg','.avif'], cls: 'img',   isMedia: true  },
+      { key: 'videos', label: 'Videos',        exts: ['.webm','.mp4','.mov','.avi'],                        cls: 'vid',   isMedia: true  },
+      { key: 'json',   label: 'JSON / Data',   exts: ['.json'],                                             cls: 'json',  isMedia: false },
+      { key: 'api',    label: 'API Endpoints', exts: [], isApi: true,                                       cls: 'api',   isMedia: false },
+      { key: 'other',  label: 'Other',         exts: [],                                                    cls: 'other', isMedia: false },
+    ];
+
+    let allLinks = {};
+
+    // ── INSTRUCTIONS TOGGLE ────────────────────────────────────────────────────
+    function toggleInstructions() {
+      const body = document.getElementById('instrBody');
+      const toggle = document.getElementById('instrToggle');
+      const open = body.classList.toggle('open');
+      toggle.textContent = open ? '▲ Hide' : '▼ Show';
+    }
+
+    // ── URL EXTRACTION ─────────────────────────────────────────────────────────
+    function getExt(url) {
+      try {
+        const path = new URL(url).pathname;
+        const dot = path.lastIndexOf('.');
+        return dot >= 0 ? path.slice(dot).toLowerCase() : '';
+      } catch { return ''; }
+    }
+
+    function extractUrls(buffer) {
+      const decoder = new TextDecoder('utf-8', { fatal: false });
+      const text = decoder.decode(buffer);
+      const regex = /https?:\/\/[a-zA-Z0-9._\-/?&=%:@#~]+/g;
+      const found = new Set();
+      let m;
+      while ((m = regex.exec(text)) !== null) {
+        let url = m[0].replace(/['")\]}>]+$/, '');
+        if (url.includes(':2fae') || /:\w{10,}:\d+$/.test(url)) continue;
+        found.add(url);
+      }
+      return found;
+    }
+
+    function categorize(urlSet) {
+      const result = {};
+      CATEGORIES.forEach(c => result[c.key] = []);
+      for (const url of urlSet) {
+        const ext = getExt(url);
+        let placed = false;
+        for (const cat of CATEGORIES) {
+          if (cat.isApi) continue;
+          if (cat.exts.includes(ext)) {
+            result[cat.key].push({ url, ext });
+            placed = true;
+            break;
+          }
+        }
+        if (!placed) {
+          if (url.includes('/api/') || (url.includes('?') && !getExt(url))) {
+            result['api'].push({ url, ext: 'API' });
+          } else {
+            result['other'].push({ url, ext: ext || '?' });
+          }
+        }
+      }
+      return result;
+    }
+
+    // ── COPY HELPERS ───────────────────────────────────────────────────────────
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copied';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+      });
+    }
+
+    function copyAll() {
+      const lines = [];
+      for (const cat of CATEGORIES) {
+        const items = allLinks[cat.key];
+        if (!items || !items.length) continue;
+        lines.push(`# ${cat.label.toUpperCase()} (${items.length})`);
+        items.forEach(i => lines.push(i.url));
+        lines.push('');
+      }
+      copyText(lines.join('\n'), document.getElementById('copyAllBtn'));
+    }
+
+    function copyCat(key, btnId) {
+      const items = allLinks[key];
+      if (!items) return;
+      copyText(items.map(i => i.url).join('\n'), document.getElementById(btnId));
+    }
+
+    // ── START OVER ─────────────────────────────────────────────────────────────
+    function startOver() {
+      allLinks = {};
+      document.getElementById('results').classList.add('hidden');
+      document.getElementById('categoriesContainer').classList.add('hidden');
+      document.getElementById('bottomBar').classList.add('hidden');
+      document.getElementById('emptyState').classList.add('hidden');
+      document.getElementById('dropZone').classList.remove('hidden');
+      document.getElementById('uploadBtns').classList.remove('hidden');
+      document.getElementById('fileInput').value = '';
+      document.getElementById('folderInput').value = '';
+    }
+
+    // ── DOWNLOAD HELPER ────────────────────────────────────────────────────────
+    function downloadUrl(url, name) {
+      // Try fetch-as-blob first; fall back to direct link if CORS blocks
+      fetch(url)
+        .then(r => r.blob())
+        .then(blob => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = name || url.split('/').pop().split('?')[0] || 'file';
+          a.click();
+          URL.revokeObjectURL(a.href);
+        })
+        .catch(() => {
+          // CORS blocked — open in new tab so user can save manually
+          window.open(url, '_blank');
+        });
+    }
+
+    // ── RENDER ─────────────────────────────────────────────────────────────────
+    function renderResults(dedupedUrls, fileNames) {
+      allLinks = categorize(dedupedUrls);
+      const total = dedupedUrls.size;
+
+      if (total === 0) {
+        document.getElementById('emptyState').classList.remove('hidden');
+        return;
+      }
+
+      // Stats bar
+      const statsBar = document.getElementById('statsBar');
+      statsBar.innerHTML = fileNames.map(n => `<span class="file-tag">${n}</span>`).join('');
+      CATEGORIES.forEach(cat => {
+        const items = allLinks[cat.key];
+        if (!items.length) return;
+        statsBar.innerHTML += `
+          <div class="stat-chip">
+            <span class="dot dot-${cat.cls}"></span>
+            <span class="count c-${cat.cls}">${items.length}</span>
+            <span style="color:var(--muted)">${cat.label}</span>
+          </div>`;
+      });
+      statsBar.innerHTML += `<div class="stat-chip"><span class="count">${total}</span><span style="color:var(--muted)">total (deduped)</span></div>`;
+
+      // Categories
+      const container = document.getElementById('categoriesContainer');
+      container.innerHTML = '';
+
+      CATEGORIES.forEach(cat => {
+        const items = allLinks[cat.key];
+        if (!items.length) return;
+
+        const div = document.createElement('div');
+        div.className = 'category';
+        const copyBtnId = `copy-${cat.key}`;
+
+        div.innerHTML = `
+          <div class="category-header">
+            <div class="category-title">
+              <span class="cat-badge badge-${cat.cls}">${cat.label}</span>
+              <span style="color:var(--muted);font-weight:400">${items.length} link${items.length !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="category-actions">
+              <button class="btn btn-copy" id="${copyBtnId}" onclick="copyCat('${cat.key}','${copyBtnId}')">⎘ Copy All</button>
+            </div>
+          </div>
+          <div class="link-list" id="list-${cat.key}"></div>
+          ${cat.isMedia ? `<div class="media-grid" id="media-${cat.key}"></div>` : ''}
+        `;
+
+        const list = div.querySelector(`#list-${cat.key}`);
+        items.forEach(({ url, ext }) => {
+          const item = document.createElement('div');
+          item.className = 'link-item';
+          const displayExt = ext.replace('.', '') || cat.cls.toUpperCase();
+          const safeName = url.split('/').pop().split('?')[0] || 'file';
+          item.innerHTML = `
+            <span class="ext-tag ext-${cat.cls}">${displayExt}</span>
+            <span class="link-text" title="${url}">${url}</span>
+            <button class="copy-single" title="Copy" onclick="navigator.clipboard.writeText('${url.replace(/'/g,"\\'")}')">⎘</button>
+          `;
+          list.appendChild(item);
+        });
+
+        // Media previews
+        if (cat.isMedia) {
+          const mediaGrid = div.querySelector(`#media-${cat.key}`);
+          items.forEach(({ url, ext }) => {
+            const card = document.createElement('div');
+            card.className = 'media-card';
+            const safeName = url.split('/').pop().split('?')[0] || 'file';
+            const isVideo = ['.webm','.mp4','.mov','.avi'].includes(ext);
+
+            card.innerHTML = `
+              <div class="media-preview">
+                ${isVideo
+                  ? `<video src="${url}" controls preload="metadata" style="width:100%;height:100%;object-fit:cover;" onerror="this.outerHTML='<span class=media-err>Could not load video</span>'"></video>`
+                  : `<img src="${url}" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.outerHTML='<span class=media-err>Could not load image</span>'">`
+                }
+              </div>
+              <div class="media-info">
+                <span class="media-name" title="${safeName}">${safeName}</span>
+                <a class="media-dl" href="#" onclick="event.preventDefault();downloadUrl('${url.replace(/'/g,"\\'")}','${safeName.replace(/'/g,"\\'")}')">⬇ Download</a>
+              </div>
+            `;
+            mediaGrid.appendChild(card);
+          });
+        }
+
+        container.appendChild(div);
+      });
+
+      document.getElementById('bottomLabel').textContent = `${total} unique links extracted from ${fileNames.length} file(s)`;
+      document.getElementById('dropZone').classList.add('hidden');
+      document.getElementById('uploadBtns').classList.add('hidden');
+      document.getElementById('results').classList.remove('hidden');
+      document.getElementById('categoriesContainer').classList.remove('hidden');
+      document.getElementById('bottomBar').classList.remove('hidden');
+    }
+
+    // ── FILE PROCESSING ────────────────────────────────────────────────────────
+    async function processFiles(files) {
+      if (!files.length) return;
+      const combined = new Set();
+      const names = [];
+
+      for (const file of files) {
+        const buf = await file.arrayBuffer();
+        const urls = extractUrls(buf);
+        urls.forEach(u => combined.add(u));
+        names.push(file.name);
+      }
+
+      renderResults(combined, names);
+    }
+
+    function handleFolderInput(files) {
+      processFiles([...files]);
+    }
+
+    // ── EVENTS ────────────────────────────────────────────────────────────────
+    const dropZone   = document.getElementById('dropZone');
+    const fileInput  = document.getElementById('fileInput');
+
+    fileInput.addEventListener('change', e => processFiles([...e.target.files]));
+
+    dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      const files = [...e.dataTransfer.files];
+      if (files.length) processFiles(files);
+    });
+  </script>
+</body>
+</html>
