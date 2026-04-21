@@ -413,6 +413,22 @@
 
   <script src="wallpaper.js"></script>
   <script>
+    // ── PASSWORD GATE ─────────────────────────────────────────────────────────
+    (function() {
+      const PASS_KEY = 'haa_dashboard_auth';
+      const CORRECT  = 'Just4archive';
+      if (sessionStorage.getItem(PASS_KEY) !== '1') {
+        const entered = prompt('Enter dashboard password:');
+        if (entered !== CORRECT) {
+          document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:Calibri,sans-serif;color:#fff;background:#1a0f2e;font-size:1rem;">Access denied. <a href="index.html" style="color:#9966CC;margin-left:0.5rem;">Go home</a></div>';
+          throw new Error('Access denied');
+        }
+        sessionStorage.setItem(PASS_KEY, '1');
+      }
+    })();
+
+    // ── SERVER WAKE-UP PING ───────────────────────────────────────────────────
+    fetch('https://hoyoverse-asset-archive-backend.onrender.com/health').catch(() => {});
     const BACKEND_URL = 'https://hoyoverse-asset-archive-backend.onrender.com';
 
     let currentFilter    = 'pending';
@@ -678,6 +694,7 @@
           <span style="color:var(--success);font-size:0.82rem;">✓ Approved — ${humanTime(sub.reviewedAt)}</span>
           ${uploadStatus}
           <button class="btn btn-secondary" id="retry-btn-${sub.id}" onclick="openRetryModal('${sub.id}')">↺ Retry Upload</button>
+          <button class="btn btn-secondary" onclick="openAddToExistingFromSub('${sub.id}')">📁 Add to Existing Post</button>
           ${downloadAllBtn}
           ${!sub.r2Deleted
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
@@ -689,6 +706,7 @@
         actionsHtml = `
           <span style="color:var(--error);font-size:0.82rem;">✕ Rejected — ${humanTime(sub.reviewedAt)}</span>
           <button class="btn btn-approve" onclick="openApprovalModal(${JSON.stringify(sub).replace(/"/g,'&quot;')})">✓ Approve &amp; Post</button>
+          <button class="btn btn-secondary" onclick="openAddToExistingFromSub('${sub.id}')">📁 Add to Existing Post</button>
           ${!sub.r2Deleted
             ? `<button class="btn btn-delete" onclick="deleteFromR2('${sub.id}')">🗑 Delete from Cloudflare</button>`
             : `<span style="color:var(--muted);font-size:0.78rem;">✓ Removed from Cloudflare</span>`}
@@ -1037,7 +1055,11 @@
 
     // ── ADD SUBMISSION FILES TO EXISTING POST ─────────────────────────────────
 
-    function openAddToExistingFromSub(sub) {
+    function openAddToExistingFromSub(subOrId) {
+      const sub = typeof subOrId === 'string'
+        ? allSubmissions.find(s => s.id === subOrId)
+        : subOrId;
+      if (!sub) { showToast('Submission not found.'); return; }
       const tabBtn = document.querySelector('.tab-btn:nth-child(2)');
       switchTab('existing', tabBtn);
       pendingSubForExisting = sub;
@@ -1045,7 +1067,7 @@
       const input = document.getElementById('ia-url-input');
       if (input) {
         input.focus();
-        input.placeholder = `Paste Archive.org URL to add ${sub.files.length} file(s) from #${sub.id}…`;
+        input.placeholder = `Paste Archive.org URL to add files from #${sub.id}…`;
       }
     }
 
