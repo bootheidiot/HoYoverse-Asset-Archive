@@ -852,22 +852,36 @@
 
       try {
         if (pendingSubForExisting && pendingSubFiles.length > 0) {
-          // Upload from submission R2 files via backend
-          const fileNames = pendingSubFiles.map((f, i) =>
-            document.getElementById(`add-fname-${i}`)?.value || f.name
+          // Only upload files that weren't removed
+          const keptFiles = pendingSubFiles
+            .map((f, i) => ({ ...f, _modalIndex: i }))
+            .filter(f => f._keep);
+
+          if (keptFiles.length === 0) {
+            showToast('No files selected — restore at least one file before uploading.');
+            btn.disabled = false;
+            btn.textContent = 'Upload Files';
+            return;
+          }
+
+          const r2Keys    = keptFiles.map(f => f.r2Key);
+          const fileNames = keptFiles.map(f =>
+            document.getElementById(`add-fname-${f._modalIndex}`)?.value || f.name
           );
+
           const res = await fetch(`${BACKEND_URL}/ia-add-from-submission`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              identifier: pendingIAItem.identifier,
+              identifier:   pendingIAItem.identifier,
               submissionId: pendingSubForExisting.id,
+              r2Keys,
               fileNames,
             }),
           });
           if (!res.ok) throw new Error();
 
-          // Mark submission as approved in the database
+          // Mark submission as approved
           await fetch(`${BACKEND_URL}/review/${pendingSubForExisting.id}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1043,42 +1057,62 @@
       document.getElementById('add-modal-title').textContent = `Add to: ${item.title}`;
 
       const sub = pendingSubForExisting;
-      let fileRows = '';
 
       if (sub && sub.files && sub.files.length > 0) {
-        // Pre-populate with submission files
-        fileRows = sub.files.map((f, i) => `
-          <div class="rename-row">
-            <div class="rename-thumb">${renderThumb(f)}</div>
-            <div class="rename-info">
-              <span class="rename-orig">Original: ${f.name}</span>
-              ${f.resolution ? `<span class="rename-res">📐 ${f.resolution}</span>` : ''}
-              <input class="modal-input" id="add-fname-${i}" value="${f.name}" style="margin-top:0.35rem;" placeholder="Rename before upload…">
-            </div>
-          </div>
-        `).join('');
-        // Store files for upload
-        pendingSubFiles = sub.files;
-      }
-
-      document.getElementById('add-modal-body').innerHTML = `
-        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;">
-          Item: <strong style="color:var(--text)">${item.identifier}</strong>
-          ${sub ? `<span style="color:var(--accent);margin-left:0.5rem;">· ${sub.files.length} file(s) from submission #${sub.id}</span>` : ''}
-        </p>
-        ${sub && sub.files.length > 0 ? `
-          <p class="modal-section-title" style="margin-bottom:0.75rem;">Files from Submission — rename before uploading</p>
-          ${fileRows}
-        ` : `
+        // Build a mutable working copy of files for this session
+        pendingSubFiles = sub.files.map((f, i) => ({ ...f, _origIndex: i, _keep: true }));
+        renderAddModalFileList(sub, item);
+      } else {
+        pendingSubFiles = [];
+        document.getElementById('add-modal-body').innerHTML = `
+          <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;">
+            Item: <strong style="color:var(--text)">${item.identifier}</strong>
+          </p>
           <div class="add-file-drop" id="add-drop">
             <input type="file" multiple onchange="stageAddFiles(this.files)">
             <p style="font-size:0.9rem;font-weight:600;">Drop files here or click to browse</p>
             <p style="font-size:0.78rem;color:var(--muted);margin-top:0.3rem;">Files will be renamed before uploading</p>
           </div>
           <div id="add-file-list" style="margin-top:1rem;display:flex;flex-direction:column;gap:0.5rem;"></div>
-        `}
-      `;
+        `;
+      }
       openModal('add-modal');
+    }
+
+    function renderAddModalFileList(sub, item) {
+      const kept = pendingSubFiles.filter(f => f._keep);
+      document.getElementById('add-modal-body').innerHTML = `
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.75rem;">
+          Item: <strong style="color:var(--text)">${item.identifier}</strong>
+          <span style="color:var(--accent);margin-left:0.5rem;">· ${kept.length} of ${sub.files.length} file(s) selected from #${sub.id}</span>
+        </p>
+        <p class="modal-section-title" style="margin-bottom:0.75rem;">
+          Files to Upload — rename or remove before uploading
+        </p>
+        ${pendingSubFiles.map((f, i) => `
+          <div class="rename-row" id="add-row-${i}" style="${!f._keep ? 'opacity:0.35;' : ''}">
+            <div class="rename-thumb">${renderThumb(f)}</div>
+            <div class="rename-info" style="flex:1;">
+              <span class="rename-orig">Original: ${f.name}</span>
+              ${f.resolution ? `<span class="rename-res">📐 ${f.resolution}</span>` : ''}
+              ${f._keep
+                ? `<input class="modal-input" id="add-fname-${i}" value="${f.name}" style="margin-top:0.35rem;" placeholder="Rename before upload…">`
+                : `<span style="font-size:0.75rem;color:var(--error);margin-top:0.35rem;display:block;">Removed</span>`
+              }
+            </div>
+            <button onclick="toggleAddFile(${i})" style="
+              flex-shrink:0; margin-left:0.5rem; background:none; border:1px solid ${f._keep ? 'rgba(255,107,107,0.35)' : 'rgba(107,255,184,0.35)'};
+              color:${f._keep ? 'var(--error)' : 'var(--success)'}; border-radius:4px;
+              padding:0.3rem 0.6rem; font-size:0.72rem; font-weight:700; cursor:pointer;
+            ">${f._keep ? '✕ Remove' : '+ Restore'}</button>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    function toggleAddFile(index) {
+      pendingSubFiles[index]._keep = !pendingSubFiles[index]._keep;
+      renderAddModalFileList(pendingSubForExisting, pendingIAItem);
     }
 
     // ── INIT ──────────────────────────────────────────────────────────────────
