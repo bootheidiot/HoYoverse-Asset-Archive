@@ -185,9 +185,128 @@
       font-weight: 600;
     }
     footer a:hover { text-decoration: underline; }
+
+    /* ── CONTRIBUTORS PANEL ── */
+    .contributors-panel {
+      position: fixed;
+      left: 1.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 200px;
+      background: rgba(15,8,30,0.82);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      backdrop-filter: blur(16px);
+      z-index: 10;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      max-height: 70vh;
+    }
+
+    .contributors-header {
+      padding: 0.75rem 1rem 0.5rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      line-height: 1.4;
+    }
+
+    .contributors-list {
+      overflow-y: auto;
+      flex: 1;
+      padding: 0.5rem 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+
+    .contributors-list::-webkit-scrollbar { width: 3px; }
+    .contributors-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .contributor-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.45rem 0.85rem;
+      transition: background 0.15s;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .contributor-item:hover { background: rgba(153,102,204,0.12); }
+
+    .contributor-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1.5px solid var(--border);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .contributor-avatar-placeholder {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(153,102,204,0.2);
+      border: 1.5px solid rgba(153,102,204,0.4);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .contributor-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 900px) {
+      .contributors-panel { display: none; }
+    }
   </style>
 </head>
 <body>
+
+  <!-- ── CONTRIBUTORS PANEL ──
+       To add a contributor: copy one <a class="contributor-item"> block.
+       - Set href to their link (GitHub, Twitter, etc.) or use href="#" if none.
+       - Set <img src> to their avatar URL, OR remove the <img> and use the placeholder <div> instead.
+       - Set the name in .contributor-name
+  ── -->
+  <div class="contributors-panel">
+    <div class="contributors-header">Thanks to all of our awesome contributors 🙂</div>
+    <div class="contributors-list">
+
+      <!-- ↓↓↓ ADD CONTRIBUTORS HERE ↓↓↓ -->
+
+      <a class="contributor-item" href="https://github.com/People-11" target="_blank" rel="noopener">
+        <div class="contributor-avatar-placeholder">P</div>
+        <span class="contributor-name">People-11</span>
+      </a>
+
+      <!-- Example with avatar image:
+      <a class="contributor-item" href="https://example.com" target="_blank" rel="noopener">
+        <img class="contributor-avatar" src="https://avatars.githubusercontent.com/u/USERID" alt="Username">
+        <span class="contributor-name">Username</span>
+      </a>
+      -->
+
+      <!-- ↑↑↑ END CONTRIBUTORS ↑↑↑ -->
+
+    </div>
+  </div>
 
   <section class="hero">
     <div class="hero-content">
@@ -202,16 +321,16 @@
       </p>
 
       <div class="buttons">
-        <a href="contribute.html" class="btn btn-primary">
-          Contribute to the Archive
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M3 8h10M9 4l4 4-4 4"/>
-          </svg>
-        </a>
-        <a href="https://archive.org/details/@bootheidiot/uploads" target="_blank" rel="noopener" class="btn btn-secondary">
+        <a href="https://archive.org/details/@bootheidiot/uploads" target="_blank" rel="noopener" class="btn btn-primary">
           Full Archive
           <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
             <path d="M4 8h8M8 4l4 4-4 4"/>
+          </svg>
+        </a>
+        <a href="contribute.html" class="btn btn-secondary">
+          Contribute to the Archive
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M3 8h10M9 4l4 4-4 4"/>
           </svg>
         </a>
         <a href="tools.html" class="btn btn-secondary">
@@ -225,7 +344,6 @@
   </section>
 
   <script src="wallpaper.js"></script>
+  <script>fetch('https://hoyoverse-asset-archive-backend.onrender.com/health').catch(()=>{});</script>
 </body>
 </html>
-
-<script>fetch('https://hoyoverse-asset-archive-backend.onrender.com/health').catch(()=>{});</script>
