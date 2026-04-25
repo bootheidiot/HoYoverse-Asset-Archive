@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <title>Dashboard Login — HoYoverse Asset Archive</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #1a0f2e; --surface: rgba(255,255,255,0.07);
+      --text: #ffffff; --muted: rgba(255,255,255,0.6);
+      --accent: #9966CC; --border: rgba(255,255,255,0.15);
+      --error: #ff6b6b; --nav-bg: rgba(20,10,40,0.85);
+    }
+    body * { text-shadow: 0 1px 6px rgba(0,0,0,0.8); }
+    html { height: 100%; background: var(--bg); }
+    body { height: 100%; background: transparent; color: var(--text); font-family: 'Calibri', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+    .login-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; backdrop-filter: blur(16px);
+      padding: 2.5rem 2rem; width: 100%; max-width: 380px;
+      display: flex; flex-direction: column; gap: 1.5rem;
+      animation: fadeUp 0.5s ease both;
+    }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    .login-title { text-align: center; }
+    .login-title h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .login-title p { font-size: 0.82rem; color: var(--muted); }
+
+    .badge {
+      display: inline-block; background: var(--accent); color: #fff;
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.2rem 0.55rem; border-radius: 3px;
+      margin-bottom: 0.6rem;
+    }
+
+    input[type="password"] {
+      width: 100%; padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.06); border: 1.5px solid var(--border);
+      border-radius: 4px; font-family: 'Calibri', sans-serif;
+      font-size: 1rem; color: var(--text); outline: none; transition: border-color 0.15s;
+    }
+    input[type="password"]:focus { border-color: var(--accent); }
+
+    .btn-login {
+      width: 100%; padding: 0.85rem;
+      background: var(--accent); color: #fff; border: none;
+      border-radius: 4px; font-family: 'Calibri', sans-serif;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      transition: filter 0.15s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+    .btn-login:hover { filter: brightness(1.15); }
+    .btn-login:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .error-msg { font-size: 0.82rem; color: var(--error); text-align: center; display: none; }
+    .error-msg.visible { display: block; }
+
+    .spinner {
+      width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.7s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .back-link { text-align: center; font-size: 0.78rem; color: var(--muted); }
+    .back-link a { color: var(--accent); text-decoration: none; }
+    .back-link a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <script src="wallpaper.js"></script>
+
+  <div class="login-card">
+    <div class="login-title">
+      <span class="badge">Admin</span>
+      <h1>Dashboard Login</h1>
+      <p>HoYoverse Asset Archive</p>
+    </div>
+
+    <input type="password" id="password" placeholder="Enter password…"
+      onkeydown="if(event.key==='Enter') login()">
+
+    <button class="btn-login" id="login-btn" onclick="login()">
+      <span class="spinner" id="spinner"></span>
+      <span id="btn-label">Sign In</span>
+    </button>
+
+    <p class="error-msg" id="error-msg">Incorrect password. Please try again.</p>
+    <p class="back-link"><a href="index.html">← Back to Archive</a></p>
+  </div>
+
+  <script>
+    const BACKEND_URL = 'https://hoyoverse-asset-archive-backend.onrender.com';
+
+    // If already have a valid token, go straight to dashboard
+    const existing = sessionStorage.getItem('haa_token');
+    if (existing) {
+      // Verify it's still valid
+      fetch(`${BACKEND_URL}/submissions`, {
+        headers: { 'Authorization': `Bearer ${existing}` }
+      }).then(r => {
+        if (r.ok) window.location.href = `${BACKEND_URL}/dashboard?token=${existing}`;
+      }).catch(() => {});
+    }
+
+    async function login() {
+      const password = document.getElementById('password').value;
+      const btn      = document.getElementById('login-btn');
+      const spinner  = document.getElementById('spinner');
+      const label    = document.getElementById('btn-label');
+      const errorMsg = document.getElementById('error-msg');
+
+      btn.disabled = true;
+      spinner.style.display = 'block';
+      label.textContent = 'Signing in…';
+      errorMsg.classList.remove('visible');
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/login`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ password }),
+        });
+
+        if (!res.ok) {
+          errorMsg.classList.add('visible');
+          return;
+        }
+
+        const { token } = await res.json();
+        sessionStorage.setItem('haa_token', token);
+
+        // Open dashboard served from backend
+        window.location.href = `${BACKEND_URL}/dashboard?token=${encodeURIComponent(token)}`;
+
+      } catch {
+        errorMsg.textContent = 'Could not reach server. Please try again.';
+        errorMsg.classList.add('visible');
+      } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+        label.textContent = 'Sign In';
+      }
+    }
+  </script>
+</body>
+</html>
