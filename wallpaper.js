@@ -19,7 +19,7 @@ const WALLPAPERS = [
   "https://ia801508.us.archive.org/27/items/1-sleepless-whispers-zenless-zone-zero/%5B2560x1440%5D%20Lucia%20Brushing%20-%20Zenless%20Zone%20Zero%20%27Sleepless%20Whispers%27.mp4",
   "https://ia801503.us.archive.org/13/items/1920x-1080-new-eridan-sunset-b-event-animated-wallpaper/%5BUltrawide%5D%20New%3B%20Eridan%20Sunset%20%28B%29%20Event%20Animated%20Wallpaper.mp4",
   "https://ia803104.us.archive.org/3/items/ultrawide-hoshimi-miyabi-has-arrived-gacha-popup-animated-wallpaper/%5BSource%5D%20Hoshimi%20Miyabi%20Has%20Arrived%20Gacha%20Popup%20Animated%20Wallpaper.mp4",
-  "https://ia800600.us.archive.org/22/items/genshin-impact-version-6.6-luna-vii-ho-yo-play-animated-wallpaper/Genshin%20Impact%20Version%206.6%20Luna%20VII%20HoYoPlay%20Animated%20Wallpaper.mp4"
+  "https://ia601700.us.archive.org/11/items/1920x-1080-tracing-vanishing-trails-event-animated-wallpaper/%5BUltrawide%5D%20Tracing%20Vanishing%20Trails%20Event%20Animated%20Wallpaper.mp4"
 ];
 
 const DEFAULT_ACCENT = '#9966CC';
