@@ -107,6 +107,7 @@
       line-height: 1.7;
     }
 
+
     .tools-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -149,7 +150,6 @@
       flex-shrink: 0;
     }
 
-    /* Target links inside tool-author specifically */
     .tool-author a {
       color: inherit;
       text-decoration: none;
@@ -188,6 +188,7 @@
 
     .tool-link svg { width: 12px; height: 12px; }
 
+   
     footer {
       background: var(--footer-bg);
       border-top: 1px solid var(--border);
@@ -228,6 +229,7 @@
 
     <div class="tools-grid">
 
+
       <div class="tool-card">
         <div class="tool-header">
           <span class="tool-name">Simple Resolution Changer</span>
@@ -238,6 +240,7 @@
           in their full resolutions when capturing art. I recommend recording in a wider resolution then is necessary for 
           any event you are capturing as you can always crop it to your desired resolution later and this way you ensure you
           are capturing all of the art. Big thanks to People11 for making this. 🙂
+
         </p>
         <a href="https://github.com/People-11/simple_resolution_changer" target="_blank" rel="noopener" class="tool-link">
           View on GitHub
@@ -246,11 +249,12 @@
           </svg>
         </a>
       </div>
-
+      
+      
       <div class="tool-card">
         <div class="tool-header">
           <span class="tool-name">HoYo Cache Extractor</span>
-          <span class="tool-author"><a href="https://www.youtube.com/@BooStreams" target="_blank" rel="noopener">BooTheIdiot</a></span>
+          <span class="tool-author"><a href="https://www.youtube.com/@BooStreams">BooTheIdiot</a></span>
         </div>
         <p class="tool-desc">
           A simple tool allowing you to browse cached data for the HoYoPlay launcher as well as the in game web browser of hoyo games.
@@ -267,11 +271,12 @@
       <div class="tool-card">
         <div class="tool-header">
           <span class="tool-name">EZ0UI</span>
-          <span class="tool-author"><a href="https://www.youtube.com/@exerentprime" target="_blank" rel="noopener">Exerent Prime</a></span>
+          <span class="tool-author"><a href="https://www.youtube.com/@exerentprime">Exerent Prime</a></span>
         </div>
         <p class="tool-desc">
           A user friendly tool for making temporary UI hiding scripts for 3DMigito compatible games. Makes UI modding of games very accessible and user friendly for games without dedicated mods.
           huge thanks to Exerent Prime for making this tool. 🙂
+
         </p>
         <a href="https://exerentprime.github.io/EZ0UI/" target="_blank" rel="noopener" class="tool-link">
           Use it here
@@ -281,15 +286,15 @@
         </a>
       </div>
 
+      
     </div>
-
+ 
     <div class="page-header">
       <h1>Non-Community Tools</h1>
       <p class="page-desc">
         These tools were not made by the community but they are also very helpful in extracting different assets.
-      </p>
+        </p>
     </div>
-
     <div class="tools-grid">
 
       <div class="tool-card">
@@ -299,6 +304,7 @@
         </div>
         <p class="tool-desc">
           A powerful tool that lets you map and browse in game assets from HoYo games and export them.
+
         </p>
         <a href="https://github.com/Escartem/AnimeStudio" target="_blank" rel="noopener" class="tool-link">
           View on GitHub
@@ -307,7 +313,7 @@
           </svg>
         </a>
       </div>
-
+      
       <div class="tool-card">
         <div class="tool-header">
           <span class="tool-name">XXMI Launcher</span>
@@ -315,6 +321,7 @@
         </div>
         <p class="tool-desc">
           A 3dmigito launcher allowing for easy modding of HoYo games.
+
         </p>
         <a href="https://github.com/SpectrumQT/XXMI-Launcher" target="_blank" rel="noopener" class="tool-link">
           View on GitHub
@@ -324,10 +331,8 @@
         </a>
       </div>
 
-    </div>
-  </main>
-
   <script src="wallpaper.js"></script>
-  <script>fetch('https://hoyoverse-asset-archive-backend.onrender.com/health').catch(()=>{});</script>
 </body>
 </html>
+
+<script>fetch('https://hoyoverse-asset-archive-backend.onrender.com/health').catch(()=>{});</script>
