@@ -605,7 +605,19 @@
         setTimeout(() => { progressWrap.style.display = 'none'; }, 2000);
       } catch (err) {
         statusMsg.className = 'status error';
-        statusMsg.textContent = '✕ Something went wrong please try again or reach out to the archive discord.';
+        let msg = '✕ ';
+        if (err.message.includes('413')) {
+          msg += 'Your files are too large — try splitting them into smaller batches.';
+        } else if (err.message.includes('408') || err.message.includes('504') || err.message.includes('timeout')) {
+          msg += 'The upload timed out — your files may be very large or your connection slow. Try again or share via Google Drive in the Discord.';
+        } else if (err.message.includes('Network error')) {
+          msg += 'Could not reach the server — check your internet connection and try again in 30 seconds.';
+        } else if (err.message.includes('400')) {
+          msg += 'Your submission was missing required fields — make sure everything is filled in.';
+        } else {
+          msg += `Something went wrong — please share this in the Discord so it can be looked into: ${err.message}`;
+        }
+        statusMsg.textContent = msg;
         progressLabel.textContent = 'Upload failed';
       } finally {
         document.getElementById('spinner').style.display = 'none';
@@ -617,4 +629,4 @@
 </body>
 </html>
 
-<script>fetch('https://bootheidiot--hoyoverse-asset-archive-flask-app.modal.run').catch(()=>{});</script>
+<script>fetch('https://bootheidiot--hoyoverse-asset-archive-flask-app.modal.run/health').catch(()=>{});</script>
