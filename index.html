@@ -274,24 +274,56 @@
 
     @media (max-width: 900px) {
       .contributors-panel { display: none; }
+      .community-posts-btn { display: none; }
     }
 
     .community-posts-btn {
-      display: block;
-      padding: 0.6rem 1rem;
+      position: fixed;
+      left: 1.5rem;
+      top: max(5rem, 50%);
+      transform: translateY(calc(-50% - 8.5rem));
+      width: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.4rem;
+      padding: 0.55rem 1rem;
       font-size: 0.75rem;
       font-weight: 700;
       color: var(--accent);
       text-decoration: none;
-      border-bottom: 1px solid var(--border);
-      background: rgba(153,102,204,0.08);
-      transition: background 0.15s;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(15,8,30,0.82);
+      backdrop-filter: blur(16px);
+      z-index: 10;
       text-align: center;
       letter-spacing: 0.02em;
+      transition: background 0.2s, border-color 0.2s;
+      overflow: hidden;
+    }
+    .community-posts-btn .btn-label {
+      transition: opacity 0.15s;
+      white-space: nowrap;
+    }
+    .community-posts-btn .btn-hover {
+      position: absolute;
+      opacity: 0;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--muted);
+      line-height: 1.5;
+      padding: 0 0.5rem;
+      white-space: normal;
+      text-align: center;
+      transition: opacity 0.15s;
     }
     .community-posts-btn:hover {
-      background: rgba(153,102,204,0.18);
+      background: rgba(153,102,204,0.15);
+      border-color: var(--accent);
     }
+    .community-posts-btn:hover .btn-label { opacity: 0; }
+    .community-posts-btn:hover .btn-hover { opacity: 1; }
 
     /* ── DISCORD FLOAT BUTTON ── */
     .discord-float {
@@ -359,10 +391,12 @@
   </a>
 
 
+  <a href="community.html" class="community-posts-btn">
+    <span class="btn-label">🌐 See All Community Posts</span>
+    <span class="btn-hover">If we don't have what you're looking for our community members might. 🐒</span>
+  </a>
+
   <div class="contributors-panel">
-    <a href="community.html" class="community-posts-btn">
-      🌐 See All Community Posts
-    </a>
     <div class="contributors-header">Huge thanks to our awesome contributors 🙂</div>
     <div class="contributors-list">
 
