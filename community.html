@@ -189,7 +189,7 @@
       <div>
         <p class="eyebrow">Community</p>
         <h1>Community Posts</h1>
-        <p class="page-desc">Content from community members across YouTube, HoYoLAB, Archive.org and more.</p>
+        <p class="page-desc">Posts from our awesome community members across the internet. 🙂</p>
       </div>
       <button class="btn btn-secondary" onclick="openRequestModal()">
         ✨ Request to be Featured
@@ -213,19 +213,13 @@
 
   </main>
 
-  <footer>
-    HoYoverse Asset Archive &mdash;
-    <a href="https://archive.org/details/@bootheidiot/uploads" target="_blank">View on Internet Archive</a>
-  </footer>
-
   <!-- REQUEST MODAL -->
   <div class="modal-overlay" id="request-modal">
     <div class="modal">
-      <h2>✨ Request to be Featured</h2>
+      <h2>Request to be Featured</h2>
       <p>
-        Paste a link to your YouTube channel, HoYoLAB profile, Archive.org page,
-        or any platform where you share HoYoverse content. The archive maintainer
-        will review it and add it if it's a good fit.
+        Provide a link to a Youtube channel, Archive.org account, Hoyolab profile, or any other platform of yours you'd like shown here. 
+        The posts from your platform of choice will appear here after review.
       </p>
       <input type="url" id="req-url" placeholder="https://…" oninput="document.getElementById('req-url').style.borderColor='var(--border)'">
       <textarea id="req-note" placeholder="Anything else you'd like to add? (optional)"></textarea>
@@ -299,7 +293,7 @@
       }
 
       if (!filtered.length) {
-        grid.innerHTML = `<div class="empty-state">${allPosts.length ? 'No posts match your search.' : 'No community posts yet — check back soon!'}</div>`;
+        grid.innerHTML = `<div class="empty-state">${allPosts.length ? 'No posts match your search.' : 'No community posts yet'}</div>`;
         return;
       }
 
