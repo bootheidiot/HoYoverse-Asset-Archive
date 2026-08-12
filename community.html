@@ -109,7 +109,7 @@
       font-size: 0.65rem; font-weight: 700; padding: 0.15rem 0.5rem;
       border-radius: 3px; background: rgba(153,102,204,0.12);
       border: 1px solid rgba(153,102,204,0.25); color: var(--accent);
-      text-transform: uppercase; letter-spacing: 0.05em;
+      letter-spacing: 0.03em;
     }
 
     .empty-state {
@@ -304,7 +304,7 @@
             : `<div class="post-thumb-placeholder">🌐</div>`
           }
           <div class="post-body">
-            <p class="post-platform">${p.platform}</p>
+            <p class="post-platform">${p.platform}${p.creatorName && p.creatorName !== 'Manual' ? ` · ${p.creatorName}` : ''}</p>
             <p class="post-name">${p.name}</p>
             ${p.note ? `<p class="post-note">${p.note}</p>` : ''}
             ${p.tags?.length ? `
