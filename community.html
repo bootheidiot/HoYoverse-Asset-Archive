@@ -63,16 +63,6 @@
     }
     .search-input:focus { border-color: var(--accent); }
 
-    .tag-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-    .tag-btn {
-      padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.78rem;
-      font-family: 'Calibri', sans-serif; font-weight: 600; cursor: pointer;
-      border: 1.5px solid var(--border); background: transparent;
-      color: var(--muted); transition: all 0.15s;
-    }
-    .tag-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .tag-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
     /* ── POSTS GRID ── */
     .posts-grid {
       display: grid;
@@ -155,8 +145,97 @@
     .btn-secondary { background: rgba(255,255,255,0.08); color: var(--text); border: 1.5px solid var(--border); }
     .btn-secondary:hover { background: rgba(255,255,255,0.14); }
 
-    /* ── REQUEST BUTTON ── */
-    .request-btn-wrap { display: flex; justify-content: flex-end; }
+    /* ── SORT TOGGLE ── */
+    .sort-btns { display: flex; gap: 0.4rem; }
+    .sort-btn {
+      padding: 0.4rem 0.85rem; border-radius: 4px; font-size: 0.78rem;
+      font-family: 'Calibri', sans-serif; font-weight: 700; cursor: pointer;
+      border: 1.5px solid var(--border); background: transparent; color: var(--muted);
+      transition: all 0.15s;
+    }
+    .sort-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .sort-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+    /* ── FILTER PANEL BUTTONS ── */
+    .filter-btns { display: flex; gap: 0.5rem; }
+    .filter-panel-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.82rem;
+      font-family: 'Calibri', sans-serif; font-weight: 700; cursor: pointer;
+      border: 1.5px solid var(--border); background: var(--surface);
+      color: var(--text); backdrop-filter: blur(8px); transition: all 0.15s;
+      position: relative;
+    }
+    .filter-panel-btn:hover { border-color: var(--accent); }
+    .filter-panel-btn.has-active { border-color: var(--accent); color: var(--accent); }
+    .filter-panel-btn .active-badge {
+      background: var(--accent); color: #fff; border-radius: 10px;
+      font-size: 0.65rem; padding: 0.1rem 0.4rem; font-weight: 700;
+    }
+
+    /* ── FILTER DRAWER ── */
+    .filter-drawer-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px); z-index: 300; display: none;
+      align-items: flex-end; justify-content: center;
+    }
+    .filter-drawer-overlay.open { display: flex; }
+    .filter-drawer {
+      background: #1a0f2e; border: 1px solid var(--border);
+      border-radius: 12px 12px 0 0; width: 100%; max-width: 700px;
+      max-height: 80vh; display: flex; flex-direction: column;
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+    .drawer-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .drawer-header h3 { font-size: 1rem; font-weight: 700; }
+    .drawer-header-right { display: flex; align-items: center; gap: 0.75rem; }
+    .drawer-reset { font-size: 0.78rem; color: var(--muted); background: none; border: none; cursor: pointer; font-family: 'Calibri', sans-serif; transition: color 0.15s; }
+    .drawer-reset:hover { color: var(--error); }
+    .drawer-close { background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; line-height: 1; }
+    .drawer-close:hover { color: var(--text); }
+
+    .drawer-search {
+      padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .drawer-search input {
+      width: 100%; padding: 0.55rem 0.9rem;
+      background: rgba(255,255,255,0.06); border: 1.5px solid var(--border);
+      border-radius: 4px; font-family: 'Calibri', sans-serif;
+      font-size: 0.88rem; color: var(--text); outline: none;
+    }
+    .drawer-search input:focus { border-color: var(--accent); }
+
+    .drawer-body { overflow-y: auto; padding: 1rem 1.5rem; flex: 1; }
+    .drawer-body::-webkit-scrollbar { width: 4px; }
+    .drawer-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .drawer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.5rem; }
+
+    .drawer-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.55rem 0.85rem; border-radius: 6px;
+      border: 1.5px solid var(--border); background: rgba(255,255,255,0.03);
+      cursor: pointer; transition: all 0.15s; user-select: none;
+    }
+    .drawer-item:hover { border-color: var(--accent); background: rgba(153,102,204,0.08); }
+    .drawer-item.active { border-color: var(--accent); background: rgba(153,102,204,0.15); }
+    .drawer-item-name { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+    .drawer-item.active .drawer-item-name { color: var(--accent); }
+    .drawer-check { width: 16px; height: 16px; border: 1.5px solid var(--border); border-radius: 3px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #fff; }
+    .drawer-item.active .drawer-check { background: var(--accent); border-color: var(--accent); }
+
+    .drawer-footer {
+      padding: 1rem 1.5rem; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+    .drawer-count { font-size: 0.82rem; color: var(--muted); }
+    .drawer-apply { background: var(--accent); color: #fff; border: none; border-radius: 4px; padding: 0.65rem 1.5rem; font-family: 'Calibri', sans-serif; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: filter 0.15s; }
+    .drawer-apply:hover { filter: brightness(1.15); }
 
     /* ── STATUS MSG ── */
     .req-status { font-size: 0.82rem; text-align: center; min-height: 1.2rem; }
@@ -198,11 +277,20 @@
 
     <!-- CONTROLS -->
     <div class="controls">
-      <div class="search-row">
-        <input class="search-input" id="search-input" placeholder="Search by name, platform, or description…" oninput="filterPosts()">
-      </div>
-      <div class="tag-filters" id="tag-filters">
-        <button class="tag-btn active" data-tag="" onclick="selectTag(this)">All</button>
+      <div class="search-row" style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+        <input class="search-input" id="search-input" placeholder="Search posts…" oninput="filterPosts()" style="flex:1;min-width:200px;">
+        <div class="sort-btns">
+          <button class="sort-btn active" id="sort-recent" onclick="setSort('recent')">Most Recent</button>
+          <button class="sort-btn" id="sort-random" onclick="setSort('random')">Random</button>
+        </div>
+        <div class="filter-btns">
+          <button class="filter-panel-btn" id="tag-filter-btn" onclick="openDrawer('tags')">
+            🏷 Tags <span class="active-badge" id="tag-badge" style="display:none;"></span>
+          </button>
+          <button class="filter-panel-btn" id="creator-filter-btn" onclick="openDrawer('creators')">
+            👤 Creators <span class="active-badge" id="creator-badge" style="display:none;"></span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -213,14 +301,59 @@
 
   </main>
 
+  <!-- TAGS DRAWER -->
+  <div class="filter-drawer-overlay" id="tags-drawer-overlay" onclick="overlayClick(event,'tags')">
+    <div class="filter-drawer">
+      <div class="drawer-header">
+        <h3>🏷 Tags</h3>
+        <div class="drawer-header-right">
+          <button class="drawer-reset" onclick="resetDrawer('tags')">↺ Reset</button>
+          <button class="drawer-close" onclick="closeDrawer('tags')">✕</button>
+        </div>
+      </div>
+      <div class="drawer-search">
+        <input id="tag-drawer-search" placeholder="Filter tags…" oninput="renderTagDrawer()">
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-grid" id="tag-drawer-grid"></div>
+      </div>
+      <div class="drawer-footer">
+        <span class="drawer-count" id="tag-drawer-count"></span>
+        <button class="drawer-apply" onclick="applyDrawer('tags')">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATORS DRAWER -->
+  <div class="filter-drawer-overlay" id="creators-drawer-overlay" onclick="overlayClick(event,'creators')">
+    <div class="filter-drawer">
+      <div class="drawer-header">
+        <h3>👤 Creators</h3>
+        <div class="drawer-header-right">
+          <button class="drawer-reset" onclick="resetDrawer('creators')">↺ Reset</button>
+          <button class="drawer-close" onclick="closeDrawer('creators')">✕</button>
+        </div>
+      </div>
+      <div class="drawer-search">
+        <input id="creator-drawer-search" placeholder="Filter creators…" oninput="renderCreatorDrawer()">
+      </div>
+      <div class="drawer-body">
+        <div class="drawer-grid" id="creator-drawer-grid"></div>
+      </div>
+      <div class="drawer-footer">
+        <span class="drawer-count" id="creator-drawer-count"></span>
+        <button class="drawer-apply" onclick="applyDrawer('creators')">Apply</button>
+      </div>
+    </div>
+  </div>
+
   <!-- REQUEST MODAL -->
   <div class="modal-overlay" id="request-modal">
     <div class="modal">
       <h2>Request to be Featured</h2>
       <p>
         Provide a link to a Youtube channel, Hoyolab profile, or any other platform of yours you'd like shown here. 
-        The posts from your platform of choice will be automnatically featured here and updated daily after review. 
-        Duplicate submissions are not necessary unless submitting other platforms. 
+        The posts from your platform of choice will appear here after review.
       </p>
       <input type="url" id="req-url" placeholder="https://…" oninput="document.getElementById('req-url').style.borderColor='var(--border)'">
       <textarea id="req-note" placeholder="Anything else you'd like to add? (optional)"></textarea>
@@ -237,17 +370,29 @@
   <script>
     const BACKEND = 'https://bootheidiot--hoyoverse-asset-archive-flask-app.modal.run';
 
-    let allPosts   = [];
-    let activeTags = [];
-    let activeTag  = '';
+    let allPosts        = [];
+    let allTags         = [];
+    let allCreators     = [];
+    let selectedTags    = new Set();
+    let selectedCreators = new Set();
+    let pendingTags     = new Set();
+    let pendingCreators = new Set();
+    let currentSort     = 'recent';
 
     async function loadPosts() {
       try {
         const res  = await fetch(`${BACKEND}/community/posts`);
         const data = await res.json();
-        allPosts   = data.posts  || [];
-        activeTags = data.tags   || [];
-        renderTagFilters();
+        allPosts    = data.posts || [];
+        allTags     = data.tags  || [];
+        // Build unique creator list from posts
+        const creatorMap = {};
+        allPosts.forEach(p => {
+          if (p.creatorName && p.creatorName !== 'Manual') {
+            creatorMap[p.creatorName] = true;
+          }
+        });
+        allCreators = Object.keys(creatorMap).sort();
         filterPosts();
       } catch {
         document.getElementById('posts-grid').innerHTML =
@@ -255,46 +400,55 @@
       }
     }
 
-    function renderTagFilters() {
-      const wrap = document.getElementById('tag-filters');
-      wrap.innerHTML = `<button class="tag-btn active" data-tag="" onclick="selectTag(this)">All</button>`;
-      activeTags.forEach(tag => {
-        const btn = document.createElement('button');
-        btn.className = 'tag-btn';
-        btn.dataset.tag = tag;
-        btn.textContent = tag;
-        btn.onclick = function() { selectTag(this); };
-        wrap.appendChild(btn);
-      });
-    }
-
-    function selectTag(btn) {
-      document.querySelectorAll('.tag-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeTag = btn.dataset.tag;
+    // ── SORT ──────────────────────────────────────────────────────────────────
+    function setSort(type) {
+      currentSort = type;
+      document.getElementById('sort-recent').classList.toggle('active', type === 'recent');
+      document.getElementById('sort-random').classList.toggle('active', type === 'random');
       filterPosts();
     }
 
+    // ── FILTER ────────────────────────────────────────────────────────────────
     function filterPosts() {
       const query = document.getElementById('search-input').value.toLowerCase().trim();
       const grid  = document.getElementById('posts-grid');
 
-      let filtered = allPosts;
+      let filtered = allPosts.filter(p => {
+        if (selectedTags.size > 0) {
+          const postTags = (p.tags || []).map(t => t.toLowerCase());
+          const matches  = [...selectedTags].every(t => postTags.includes(t.toLowerCase()));
+          if (!matches) return false;
+        }
+        if (selectedCreators.size > 0) {
+          if (!selectedCreators.has(p.creatorName)) return false;
+        }
+        if (query) {
+          return (
+            (p.name || '').toLowerCase().includes(query) ||
+            (p.platform || '').toLowerCase().includes(query) ||
+            (p.creatorName || '').toLowerCase().includes(query) ||
+            (p.note || '').toLowerCase().includes(query) ||
+            (p.tags || []).some(t => t.toLowerCase().includes(query))
+          );
+        }
+        return true;
+      });
 
-      if (activeTag) {
-        filtered = filtered.filter(p => p.tags && p.tags.some(t => t.toLowerCase() === activeTag.toLowerCase()));
+      // Sort
+      if (currentSort === 'recent') {
+        filtered.sort((a, b) => new Date(b.publishedAt || b.fetchedAt || 0) - new Date(a.publishedAt || a.fetchedAt || 0));
+      } else {
+        // Fisher-Yates shuffle
+        for (let i = filtered.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
+        }
       }
-      if (query) {
-        filtered = filtered.filter(p =>
-          p.name?.toLowerCase().includes(query) ||
-          p.platform?.toLowerCase().includes(query) ||
-          p.note?.toLowerCase().includes(query) ||
-          p.tags?.some(t => t.toLowerCase().includes(query))
-        );
-      }
+
+      updateFilterBadges();
 
       if (!filtered.length) {
-        grid.innerHTML = `<div class="empty-state">${allPosts.length ? 'No posts match your search.' : 'No community posts yet'}</div>`;
+        grid.innerHTML = `<div class="empty-state">${allPosts.length ? 'No posts match your filters.' : 'No community posts yet — check back soon!'}</div>`;
         return;
       }
 
@@ -306,17 +460,133 @@
           }
           <div class="post-body">
             <p class="post-platform">${p.platform}${p.creatorName && p.creatorName !== 'Manual' ? ` · ${p.creatorName}` : ''}</p>
-            <p class="post-name">${p.name}</p>
+            <p class="post-name">${p.name || ''}</p>
             ${p.note ? `<p class="post-note">${p.note}</p>` : ''}
             ${p.tags?.length ? `
               <div class="post-tags">
                 ${p.tags.map(t => `<span class="post-tag">${t}</span>`).join('')}
-              </div>` : ''
-            }
+              </div>` : ''}
           </div>
         </a>
       `).join('');
     }
+
+    function updateFilterBadges() {
+      const tagBadge     = document.getElementById('tag-badge');
+      const creatorBadge = document.getElementById('creator-badge');
+      const tagBtn       = document.getElementById('tag-filter-btn');
+      const creatorBtn   = document.getElementById('creator-filter-btn');
+
+      if (selectedTags.size > 0) {
+        tagBadge.textContent = selectedTags.size;
+        tagBadge.style.display = 'inline';
+        tagBtn.classList.add('has-active');
+      } else {
+        tagBadge.style.display = 'none';
+        tagBtn.classList.remove('has-active');
+      }
+      if (selectedCreators.size > 0) {
+        creatorBadge.textContent = selectedCreators.size;
+        creatorBadge.style.display = 'inline';
+        creatorBtn.classList.add('has-active');
+      } else {
+        creatorBadge.style.display = 'none';
+        creatorBtn.classList.remove('has-active');
+      }
+    }
+
+    // ── DRAWERS ───────────────────────────────────────────────────────────────
+    function openDrawer(type) {
+      if (type === 'tags') {
+        pendingTags = new Set(selectedTags);
+        renderTagDrawer();
+        document.getElementById('tags-drawer-overlay').classList.add('open');
+      } else {
+        pendingCreators = new Set(selectedCreators);
+        renderCreatorDrawer();
+        document.getElementById('creators-drawer-overlay').classList.add('open');
+      }
+    }
+
+    function closeDrawer(type) {
+      document.getElementById(`${type}-drawer-overlay`).classList.remove('open');
+    }
+
+    function overlayClick(e, type) {
+      if (e.target === document.getElementById(`${type}-drawer-overlay`)) closeDrawer(type);
+    }
+
+    function applyDrawer(type) {
+      if (type === 'tags') {
+        selectedTags = new Set(pendingTags);
+      } else {
+        selectedCreators = new Set(pendingCreators);
+      }
+      closeDrawer(type);
+      filterPosts();
+    }
+
+    function resetDrawer(type) {
+      if (type === 'tags') {
+        pendingTags.clear();
+        renderTagDrawer();
+      } else {
+        pendingCreators.clear();
+        renderCreatorDrawer();
+      }
+    }
+
+    function renderTagDrawer() {
+      const q     = (document.getElementById('tag-drawer-search')?.value || '').toLowerCase();
+      const grid  = document.getElementById('tag-drawer-grid');
+      const count = document.getElementById('tag-drawer-count');
+      const items = allTags.filter(t => !q || t.toLowerCase().includes(q));
+      count.textContent = `${pendingTags.size} selected`;
+      grid.innerHTML = items.map(tag => {
+        const active = pendingTags.has(tag);
+        return `
+          <div class="drawer-item${active ? ' active' : ''}" onclick="toggleDrawerItem('tags','${tag.replace(/'/g,"\\'")}')">
+            <span class="drawer-item-name">${tag}</span>
+            <span class="drawer-check">${active ? '✓' : ''}</span>
+          </div>`;
+      }).join('') || '<p style="font-size:0.82rem;color:var(--muted);">No tags found.</p>';
+    }
+
+    function renderCreatorDrawer() {
+      const q     = (document.getElementById('creator-drawer-search')?.value || '').toLowerCase();
+      const grid  = document.getElementById('creator-drawer-grid');
+      const count = document.getElementById('creator-drawer-count');
+      const items = allCreators.filter(c => !q || c.toLowerCase().includes(q));
+      count.textContent = `${pendingCreators.size} selected`;
+      grid.innerHTML = items.map(creator => {
+        const active = pendingCreators.has(creator);
+        return `
+          <div class="drawer-item${active ? ' active' : ''}" onclick="toggleDrawerItem('creators','${creator.replace(/'/g,"\\'")}')">
+            <span class="drawer-item-name">${creator}</span>
+            <span class="drawer-check">${active ? '✓' : ''}</span>
+          </div>`;
+      }).join('') || '<p style="font-size:0.82rem;color:var(--muted);">No creators found.</p>';
+    }
+
+    function toggleDrawerItem(type, value) {
+      if (type === 'tags') {
+        if (pendingTags.has(value)) pendingTags.delete(value);
+        else pendingTags.add(value);
+        renderTagDrawer();
+      } else {
+        if (pendingCreators.has(value)) pendingCreators.delete(value);
+        else pendingCreators.add(value);
+        renderCreatorDrawer();
+      }
+    }
+
+    // Keyboard close
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeDrawer('tags');
+        closeDrawer('creators');
+      }
+    });
 
     // ── REQUEST MODAL ──────────────────────────────────────────────────────────
     function openRequestModal() {
