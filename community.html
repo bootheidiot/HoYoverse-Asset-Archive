@@ -328,14 +328,14 @@
   <div class="filter-drawer-overlay" id="creators-drawer-overlay" onclick="overlayClick(event,'creators')">
     <div class="filter-drawer">
       <div class="drawer-header">
-        <h3>👤 Creators</h3>
+        <h3>🐒 Community Members</h3>
         <div class="drawer-header-right">
           <button class="drawer-reset" onclick="resetDrawer('creators')">↺ Reset</button>
           <button class="drawer-close" onclick="closeDrawer('creators')">✕</button>
         </div>
       </div>
       <div class="drawer-search">
-        <input id="creator-drawer-search" placeholder="Filter creators…" oninput="renderCreatorDrawer()">
+        <input id="creator-drawer-search" placeholder="Filter community members…" oninput="renderCreatorDrawer()">
       </div>
       <div class="drawer-body">
         <div class="drawer-grid" id="creator-drawer-grid"></div>
@@ -448,7 +448,7 @@
       updateFilterBadges();
 
       if (!filtered.length) {
-        grid.innerHTML = `<div class="empty-state">${allPosts.length ? 'No posts match your filters.' : 'No community posts yet — check back soon!'}</div>`;
+        grid.innerHTML = `<div class="empty-state">${allPosts.length ? 'No posts match your filters.' : 'No community posts yet check back soon :)'}</div>`;
         return;
       }
 
@@ -565,7 +565,7 @@
             <span class="drawer-item-name">${creator}</span>
             <span class="drawer-check">${active ? '✓' : ''}</span>
           </div>`;
-      }).join('') || '<p style="font-size:0.82rem;color:var(--muted);">No creators found.</p>';
+      }).join('') || '<p style="font-size:0.82rem;color:var(--muted);">No community members found.</p>';
     }
 
     function toggleDrawerItem(type, value) {
