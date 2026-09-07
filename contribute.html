@@ -421,7 +421,11 @@
 
   <script src="wallpaper.js"></script>
   <script>
-    const BACKEND_URL = 'https://bootheidiot--hoyoverse-asset-archive-flask-app.modal.run/submit';
+    // Large uploads go directly from the browser to R2. Modal only handles
+    // short presign/metadata requests, so large files don't hit its timeout.
+    const API_BASE_URL = 'https://bootheidiot--hoyoverse-asset-archive-flask-app.modal.run';
+    const PRESIGN_URL = `${API_BASE_URL}/presign-upload`;
+    const METADATA_URL = `${API_BASE_URL}/submit-metadata`;
 
     const dropZone   = document.getElementById('drop-zone');
     const fileInput  = document.getElementById('file-input');
@@ -515,10 +519,11 @@
       return bytes + ' B';
     }
 
-    function xhrUpload(url, formData, onProgress) {
+    function xhrPutUpload(url, file, onProgress) {
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', url);
+        xhr.open('PUT', url, true);
+        xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
 
         xhr.upload.onprogress = (e) => {
           if (e.lengthComputable) onProgress(e.loaded, e.total);
@@ -528,13 +533,30 @@
           if (xhr.status >= 200 && xhr.status < 300) {
             resolve();
           } else {
-            reject(new Error(`Server error: ${xhr.status}`));
+            reject(new Error(`R2 upload error: ${xhr.status}`));
           }
         };
 
-        xhr.onerror = () => reject(new Error('Network error during upload'));
-        xhr.send(formData);
+        xhr.onerror = () => reject(new Error('Network error during file upload'));
+        xhr.onabort = () => reject(new Error('Upload was cancelled'));
+        xhr.send(file);
       });
+    }
+
+    async function postJson(url, body) {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      let data = {};
+      try { data = await response.json(); } catch (_) {}
+
+      if (!response.ok) {
+        throw new Error(data.error || `Server error: ${response.status}`);
+      }
+      return data;
     }
 
     async function submitForm() {
@@ -551,7 +573,7 @@
       progressWrap.style.display = 'flex';
       progressBar.style.width = '0%';
       progressPct.textContent = '0%';
-      progressLabel.textContent = 'Uploading…';
+      progressLabel.textContent = 'Preparing upload…';
 
       // Build extra info — append contributor details if opted in
       let extraInfo = document.getElementById('extra-info').value.trim();
@@ -564,24 +586,60 @@
         extraInfo = extraInfo + creditLine;
       }
 
-      const formData = new FormData();
-      formData.append('game',        document.getElementById('game').value);
-      formData.append('eventTitle',  document.getElementById('event-title').value.trim());
-      formData.append('eventType',   getFieldValue('event-type', 'event-type-other'));
-      formData.append('contentType', getFieldValue('content-type', 'content-type-other'));
-      formData.append('extraInfo',   extraInfo);
-      selectedFiles.forEach(f => formData.append('files', f));
-
       const totalSize = selectedFiles.reduce((sum, f) => sum + f.size, 0);
+      let uploadedBytes = 0;
+      const submissionId = crypto.randomUUID().replace(/-/g, '').slice(0, 8).toUpperCase();
+      const uploadedFiles = [];
 
       try {
-        await xhrUpload(BACKEND_URL, formData, (loaded, total) => {
-          const pct = Math.min(100, Math.round((loaded / total) * 100));
-          progressBar.style.width = `${pct}%`;
-          progressPct.textContent = `${pct}%`;
-          progressLabel.textContent = pct < 100
-            ? `Uploading… ${formatBytes(loaded)} / ${formatBytes(totalSize)}`
-            : 'Finalizing…';
+        // Each file is uploaded separately automatically, but all files use
+        // the same submission ID so the backend stores them as one submission.
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const file = selectedFiles[i];
+          progressLabel.textContent = `Preparing file ${i + 1} of ${selectedFiles.length}…`;
+
+          const mimeType = file.type || 'application/octet-stream';
+          const presign = await postJson(PRESIGN_URL, {
+            filename: file.name,
+            mimeType,
+            submissionId,
+          });
+
+          await xhrPutUpload(presign.url, file, (loaded) => {
+            const overallLoaded = uploadedBytes + loaded;
+            const pct = totalSize > 0
+              ? Math.min(100, Math.round((overallLoaded / totalSize) * 100))
+              : 100;
+            progressBar.style.width = `${pct}%`;
+            progressPct.textContent = `${pct}%`;
+            progressLabel.textContent = `Uploading file ${i + 1} of ${selectedFiles.length}… ${formatBytes(overallLoaded)} / ${formatBytes(totalSize)}`;
+          });
+
+          uploadedBytes += file.size;
+          progressBar.style.width = `${Math.min(100, Math.round((uploadedBytes / totalSize) * 100))}%`;
+          progressPct.textContent = `${Math.min(100, Math.round((uploadedBytes / totalSize) * 100))}%`;
+          progressLabel.textContent = `Uploaded ${i + 1} of ${selectedFiles.length} files`;
+
+          uploadedFiles.push({
+            name: file.name,
+            size: file.size,
+            mimeType,
+            r2Key: presign.r2Key,
+          });
+        }
+
+        progressLabel.textContent = 'Finalizing submission…';
+
+        // Only metadata goes through Modal. The files themselves never pass
+        // through Flask, and all uploaded files remain under one submission.
+        await postJson(METADATA_URL, {
+          game: document.getElementById('game').value,
+          eventTitle: document.getElementById('event-title').value.trim(),
+          eventType: getFieldValue('event-type', 'event-type-other'),
+          contentType: getFieldValue('content-type', 'content-type-other'),
+          extraInfo,
+          submissionId,
+          files: uploadedFiles,
         });
 
         progressBar.style.width = '100%';
@@ -607,11 +665,13 @@
         statusMsg.className = 'status error';
         let msg = '✕ ';
         if (err.message.includes('413')) {
-          msg += 'Your files are too large — try splitting them into smaller batches.';
+          msg += 'The upload was rejected because the request was too large. Please try again.';
         } else if (err.message.includes('408') || err.message.includes('504') || err.message.includes('timeout')) {
-          msg += 'The upload timed out — your files may be very large or your connection slow. Try again or share via Google Drive in the Discord.';
+          msg += 'The upload timed out — please try again. Large files are uploaded individually now, so you do not need to split them manually.';
         } else if (err.message.includes('Network error')) {
-          msg += 'Could not reach the server — check your internet connection and try again in 30 seconds.';
+          msg += 'Could not reach the upload server — check your internet connection and try again in 30 seconds.';
+        } else if (err.message.includes('cancelled')) {
+          msg += 'The upload was cancelled. No manual splitting is required; please try submitting again.';
         } else if (err.message.includes('400')) {
           msg += 'Your submission was missing required fields — make sure everything is filled in.';
         } else {
@@ -625,6 +685,7 @@
         validateForm();
       }
     }
+
   </script>
 </body>
 </html>
