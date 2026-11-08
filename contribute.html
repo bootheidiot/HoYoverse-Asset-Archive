@@ -559,6 +559,39 @@
       return data;
     }
 
+    function getSelectedFileDimensions(file) {
+      return new Promise(resolve => {
+        const url = URL.createObjectURL(file);
+        const isVideo = (file.type || '').startsWith('video/') || /\\.(mp4|webm|mov|avi|mkv|m4v)$/i.test(file.name);
+        if (isVideo) {
+          const video = document.createElement('video');
+          video.preload = 'metadata';
+          video.onloadedmetadata = () => {
+            const value = video.videoWidth && video.videoHeight
+              ? `${video.videoWidth}×${video.videoHeight}` : null;
+            URL.revokeObjectURL(url);
+            video.removeAttribute('src');
+            video.load();
+            resolve(value);
+          };
+          video.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+          video.src = url;
+        } else if ((file.type || '').startsWith('image/') || /\\.(png|jpe?g|webp|gif|avif|bmp)$/i.test(file.name)) {
+          const img = new Image();
+          img.onload = () => {
+            const value = `${img.naturalWidth}×${img.naturalHeight}`;
+            URL.revokeObjectURL(url);
+            resolve(value);
+          };
+          img.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+          img.src = url;
+        } else {
+          URL.revokeObjectURL(url);
+          resolve(null);
+        }
+      });
+    }
+
     async function submitForm() {
       submitBtn.disabled = true;
       document.getElementById('spinner').style.display = 'block';
@@ -592,6 +625,12 @@
       const uploadedFiles = [];
 
       try {
+        // Read image/video dimensions locally in the browser. Only the tiny
+        // resolution strings are sent to the backend; file bytes still go
+        // directly from the browser to R2 as before.
+        progressLabel.textContent = 'Reading file dimensions…';
+        const fileResolutions = await Promise.all(selectedFiles.map(getSelectedFileDimensions));
+
         // Each file is uploaded separately automatically, but all files use
         // the same submission ID so the backend stores them as one submission.
         for (let i = 0; i < selectedFiles.length; i++) {
@@ -624,6 +663,7 @@
             name: file.name,
             size: file.size,
             mimeType,
+            resolution: fileResolutions[i] || null,
             r2Key: presign.r2Key,
           });
         }
